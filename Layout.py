@@ -20,7 +20,7 @@ def Layout(path):
 
     def skipline(n):
         for i in range(n):
-            line = file.readline()
+            file.readline()
 
     def placepoint(color): # Suppose que les deux prochaines lignes contiennent les coordonnées du point à placer
         line = file.readline()
