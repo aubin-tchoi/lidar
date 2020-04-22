@@ -7,7 +7,7 @@ import docx2txt
 
 # path = "/Users/aubin/OneDrive/1A/Lidar/Work/"
 
-def Layout(path):
+def Layout(path,b):
 
     # Conversion du .docx en .txt
 
@@ -63,7 +63,8 @@ def Layout(path):
     plt.title('Layout du parc éolien (Mât en vert, lidar en rouge et éoliennes en bleu)')
     plt.grid()
     plt.axis('equal')
-    plt.show()
+    if b:
+        plt.show()
 
     file.close()
 
