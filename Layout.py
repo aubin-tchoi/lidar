@@ -46,7 +46,7 @@ def Layout(path):
     placepoint('g')        # Mât en vert
 
     skipline(1)
-    x,y = placepoint('r')        # Lidar en rouge
+    x,y = placepoint('r')  # Lidar en rouge
 
     line = file.readline()
     n = 8                  # Nombre d'éoliennes
