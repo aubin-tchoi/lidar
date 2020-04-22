@@ -28,7 +28,8 @@ def Layout(path):
         line = file.readline()
         y = float(line)
         plt.scatter(x,y,c=color)
-
+        return x,y
+    
     # Lecture du fichier
 
     path = path + "coordx_y_mat_eoliennes_ls.txt"
@@ -46,7 +47,7 @@ def Layout(path):
     placepoint('g')        # Mât en vert
 
     skipline(1)
-    placepoint('r')        # Lidar en rouge
+    x,y = placepoint('r')        # Lidar en rouge
 
     line = file.readline()
     n = 8                  # Nombre d'éoliennes
@@ -70,4 +71,4 @@ def Layout(path):
     # Suppression du fichier .txt créé
 
     os.remove("/Users/aubin/Documents/1A/Lidar/Work/coordx_y_mat_eoliennes_ls.txt")
-    return None
+    return x,y
