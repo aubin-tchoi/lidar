@@ -68,9 +68,6 @@ def ParseurLidar(chemin):
 
     fichier.close()
     
-    costheta = np.vectorize(np.cos)(L[3])
-    sintheta = np.vectorize(np.sin)(L[3])
-    cosphi   = np.vectorize(np.cos)(L[4])
-    sinphi   = np.vectorize(np.sin)(L[4])
+    T = [np.vectorize(np.cos)(L[3]), np.vectorize(np.sin)(L[3]), np.vectorize(np.cos)(L[4]), np.vectorize(np.sin)(L[4])]
 
-    return L, costheta, sintheta, cosphi, sinphi
+    return L, T
