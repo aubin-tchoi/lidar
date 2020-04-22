@@ -5,7 +5,7 @@ import re
 import matplotlib.pyplot as plt
 import docx2txt
 
-# path = "/Users/aubin/Documents/1A/Lidar/Work/"
+# path = "/Users/aubin/OneDrive/1A/Lidar/Work/"
 
 def Layout(path):
     
@@ -32,8 +32,7 @@ def Layout(path):
     
     # Lecture du fichier
 
-    path = path + "coordx_y_mat_eoliennes_ls.txt"
-    file = open(path)
+    file = open(path + "coordx_y_mat_eoliennes_ls.txt")
 
     with open(path, "r+") as f:
         d = f.readlines()
@@ -70,5 +69,5 @@ def Layout(path):
 
     # Suppression du fichier .txt créé
 
-    os.remove("/Users/aubin/Documents/1A/Lidar/Work/coordx_y_mat_eoliennes_ls.txt")
+    os.remove(path + "coordx_y_mat_eoliennes_ls.txt")
     return x,y
