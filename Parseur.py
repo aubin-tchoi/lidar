@@ -23,7 +23,7 @@ def ParseurSonique(chemin):
     U = np.array(U0)                          # Vitesses en cm/s
     V = np.array(V0)
     W = np.array(W0)
-    
+
     fichier.close()
     return U, V, W
 
@@ -44,7 +44,7 @@ def ParseurLidar(chemin):
     # L = [Configuration ID, Scan ID, LOS ID, Azimuth (en °), Elevation (en °), Range (en m), RWS (en m/s), DRWS (en m/s), CNR (en dB), Confidence Index (en %), Mean Error, Status]
     # RWS  : Radial Wind Speed
     # DRWS : Dispersion of Radial Wind Speed
-    # CNR  : Carrier to     Noise Ratio
+    # CNR  : Carrier to Noise Ratio
 
     # Azimuth   : angle entre l'objet et une direction de référence (Nord) dans le plan horizontal (theta)
     # Elévation : (phi)
@@ -67,7 +67,7 @@ def ParseurLidar(chemin):
                 L[j-2].append(float(polar[j]))
 
     fichier.close()
-    
+
     T = [np.vectorize(np.cos)(L[3]), np.vectorize(np.sin)(L[3]), np.vectorize(np.cos)(L[4]), np.vectorize(np.sin)(L[4])]
 
     return L, T
