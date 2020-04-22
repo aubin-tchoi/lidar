@@ -8,9 +8,9 @@ import docx2txt
 # path = "/Users/aubin/OneDrive/1A/Lidar/Work/"
 
 def Layout(path):
-    
+
     # Conversion du .docx en .txt
-    
+
     MY_TEXT = docx2txt.process(path + "coordx_y_mat_eoliennes_ls.docx")
 
     with open(path + "coordx_y_mat_eoliennes_ls.txt", "w") as text_file:
@@ -29,18 +29,18 @@ def Layout(path):
         y = float(line)
         plt.scatter(x,y,c=color)
         return x,y
-    
+
     # Lecture du fichier
 
-    file = open(path + "coordx_y_mat_eoliennes_ls.txt")
-
-    with open(path, "r+") as f:
+    with open(path + "coordx_y_mat_eoliennes_ls.txt", "r+") as f:
         d = f.readlines()
         f.seek(0)
         for i in d:
             if i != '\n':
                 f.write(i)
         f.truncate()
+
+    file = open(path + "coordx_y_mat_eoliennes_ls.txt")
 
     skipline(2)
     placepoint('g')        # Mât en vert
@@ -55,9 +55,9 @@ def Layout(path):
         skipline(1)
         placepoint('b')    # Eoliennes en bleu
         skipline(2)
-    
+
     # Affichage
-    
+
     plt.xlabel('x')
     plt.ylabel('y')
     plt.title('Layout du parc éolien (Mât en vert, lidar en rouge et éoliennes en bleu)')
