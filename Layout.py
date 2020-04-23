@@ -6,7 +6,6 @@ import docx2txt
 import numpy as np
 import seaborn as sns
 import matplotlib.pyplot as plt
-from scipy import stats
 
 sns.set(color_codes=True)
 
