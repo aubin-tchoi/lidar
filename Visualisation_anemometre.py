@@ -26,9 +26,9 @@ def trace_vitesse1(U,V):
 # On visualise le vecteur de coordonnes (-U,-V) car U positif, le vent vient d'Ouest donc il vient de la gauche ce qui correspond à x négatif, de même pour V
 
 def trace_vitesse2(U,V):
-    norm_horizontales=norme(U,V) 
-    U_norm=-U/norm_horizontales
-    V_norm=-V/norm_horizontales
+    norm_horizontales = norme(U,V) 
+    U_norm = -U/norm_horizontales
+    V_norm = -V/norm_horizontales
     plt.plot(0,0,'r+')
     plt.plot(U_norm,V_norm,'+')
     plt.show()
