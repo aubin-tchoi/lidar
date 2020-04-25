@@ -78,7 +78,7 @@ def windrose1(U,V):     # Windrose
 
 from Parseur import ParseurSonique
 
-U,V,W = ParseurSonique("/Users/Tchoi/OneDrive/1A/Lidar/Work/1510301.I55.txt")
+U,V,W = ParseurSonique("/Users/aubin/OneDrive/1A/Lidar/Work/1510301.I55.txt")
 trace_vitesse1(U,V)
 trace_vitesse2(U,V)
 plot_theta(U,V)
