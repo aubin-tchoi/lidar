@@ -17,7 +17,8 @@ def theta(x,y):
 # Tracé des vitesses
 
 def trace_vitesse1(U,V):
-    T = np.linspace(0,3600,36000)
+    N = len(U)
+    T = np.linspace(0,N,N)
     plt.plot(T,U,'r')
     plt.plot(T,V,'g')
     plt.plot(T,W,'b')
