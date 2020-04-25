@@ -27,7 +27,7 @@ def trace_vitesse1(U,V):
 # On visualise le vecteur de coordonnes (-U,-V) car U positif, le vent vient d'Ouest donc il vient de la gauche ce qui correspond à x négatif, de même pour V
 
 def trace_vitesse2(U,V):
-    norm_horizontales = norme(U,V) 
+    norm_horizontales = norme(U,V)
     U_norm = -U/norm_horizontales
     V_norm = -V/norm_horizontales
     plt.plot(0,0,'r+')
@@ -60,7 +60,7 @@ def windrose0(U,V,nbr_zones):   # Windrose "à la main" sans la valeur des vites
 
     densite = decompte/N
     # print(densite*100)
-    t = np.array([10*k for k in range(0,nbr_zones)])*np.pi/180.0
+    t = np.array([360/nbr_zones*k for k in range(0,nbr_zones)])*np.pi/180.0 # 360/nbr_zones : largeur d'une zone
     ax = plt.subplot(111, projection='polar')
     ax.set_thetagrids(angles=np.arange(0, 360, 45), labels=["E", "N-E", "N", "N-W", "W", "S-W", "S", "S-E"])
     ax.bar(t, densite*100, width = 2*np.pi/nbr_zones) # Chaque zone occupe 1/nbr_zones du cercle
@@ -78,7 +78,7 @@ def windrose1(U,V):     # Windrose
 
 from Parseur import ParseurSonique
 
-U,V,W = ParseurSonique("/Users/aubin/OneDrive/1A/Lidar/Work/1510301.I55.txt")
+U,V,W = ParseurSonique("/Users/Tchoi/OneDrive/1A/Lidar/Work/1510301.I55.txt")
 trace_vitesse1(U,V)
 trace_vitesse2(U,V)
 plot_theta(U,V)
