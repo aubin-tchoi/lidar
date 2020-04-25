@@ -3,107 +3,83 @@ import numpy as np
 from matplotlib import cm
 from windrose import WindroseAxes
 
-#ouverture document en mode lecture
-f=open("/Users/annegagneux/Desktop/SEMESTRE2/COV_Meteo/Projet_recherche/Depot/Work/1510301.I55","r")
-
-
-text=f.readlines()
-text=text[0].split('\r')
-print(len(text))
-U=list()
-V=list()
-W=list()
-
-N=len(text)
-for i in range(1,N):
-    ligne=text[i]
-    ls=ligne.split(',')
-    U.append(int(ls[0]))
-    V.append(int(ls[1]))
-    W.append(int(ls[2]))
-    
-U=np.array(U)
-V=np.array(V)
-W=np.array(W)
-
-# composantes de vitesse :
-# U= de l'ouest vers l'est
+# Composantes de vitesse :
+# U = de l'ouest vers l'est
 # V = du sud au nord
 # W = de bas en haut
 
-
-#tracé des vitesses
-T=np.linspace(0,3600,36000)
-plt.plot(T,U,'r')
-plt.plot(T,V,'g')
-plt.plot(T,W,'b')
-
 def norme(x,y):
     return np.sqrt(x**2+y**2)
-    
-norm_horizontales=norme(U,V) 
 
-
-#on visualise le vecteur de coordonnes (-U,-V) car U positif, le vent vient d'Ouest donc il vient de la gauche ce qui correspond à x négatif, de même pour V
- 
-U_norm=-U/norm_horizontales
-V_norm=-V/norm_horizontales
-plt.plot(0,0,'r+')
-plt.plot(U_norm,V_norm,'+')
-plt.show()
-
-
-#on associe un vecteur vitesse aux composantes U et V-> on affiche ces points sur une carte pour savoir d'où proviennent les vents. L'échelle de couleur donne la vitesse du vent (norme du vecteur (U,V))
 def theta(x,y):
-    return np.arccos(x/norme(x,y)) #ici arccos bijectif car tm dans cadre sup
+    return -np.arccos(x/norme(x,y)) #ici arccos bijectif car tm dans cadre inf
 
-theta=theta(U,V)
-cm = plt.cm.get_cmap('Spectral')
-ax = plt.subplot(111, projection='polar')
-sc=ax.scatter(theta,norm_horizontales,c=norm_horizontales,cmap=cm)
-plt.colorbar(sc)
-plt.show()
+# Tracé des vitesses
 
+def trace_vitesse1(U,V):
+    T = np.linspace(0,3600,36000)
+    plt.plot(T,U,'r')
+    plt.plot(T,V,'g')
+    plt.plot(T,W,'b')
+    plt.show()
 
-#on essaie de créer une rose des vents: on compte la densité de vents qui proviennent de chaque direction (N,N-E,E, etc) en découpant un cercle en différents quartiers. 
-comptage=np.zeros(18)
-triage=[[] for k in range(18)]
+# On visualise le vecteur de coordonnes (-U,-V) car U positif, le vent vient d'Ouest donc il vient de la gauche ce qui correspond à x négatif, de même pour V
 
-theta_deg=theta*180.0/np.pi
-v_max=np.max(norm_horizontales)
-for i in range(1,N-1):
-    for k in range(0,18):
-        if theta_deg[i]<(k+1)*10 and theta_deg[i]>k*10:
-            comptage[k]+=1
-            
-            triage[k].append((theta_deg[i],norm_horizontales[i]))
-    
-densite=comptage/N
-print(densite*100)
+def trace_vitesse2(U,V):
+    norm_horizontales=norme(U,V) 
+    U_norm=-U/norm_horizontales
+    V_norm=-V/norm_horizontales
+    plt.plot(0,0,'r+')
+    plt.plot(U_norm,V_norm,'+')
+    plt.show()
 
+# On associe un vecteur vitesse aux composantes U et V-> on affiche ces points sur une carte pour savoir d'où proviennent les vents. L'échelle de couleur donne la vitesse du vent (norme du vecteur (U,V))
 
+def plot_theta(U,V):
+    N = len(U)
+    theta0 = theta(U,V)
+    norm_horizontales = norme(U,V)
+    cm = plt.cm.get_cmap('Spectral')
+    ax = plt.subplot(111, projection='polar')
+    sc = ax.scatter(theta0,norm_horizontales,c=norm_horizontales,cmap=cm)
+    plt.colorbar(sc)
+    plt.show()
 
-#windrose"à la main" sans la valeur des vitesses
-t=np.array([10*k for k in range(0,18)])
-t=np.pi*t/180.0
-ax = plt.subplot(111, projection='polar')
-width = np.pi * 18
-ax.set_thetagrids(angles=np.arange(0, 360, 45), labels=["E", "N-E", "N", "N-W", "W", "S-W", "S", "S-E"])
-ax.bar(t, densite*100,width=0.15)
-plt.show()
+# On essaie de créer une rose des vents : on compte la densité de vents qui proviennent de chaque direction (N,N-E,E, etc) en découpant un cercle en différents quartiers.
 
+def windrose0(U,V,nbr_zones):   # Windrose "à la main" sans la valeur des vitesses
 
-#windrose
-ax = WindroseAxes.from_ax()
-ax.bar( theta_deg-90,norm_horizontales, normed=True, opening=0.6 )
-ax.set_legend()
-plt.show()
+    N = len(U)
+    decompte = np.zeros(nbr_zones)
+    theta_deg = theta(U,-V)*180/np.pi + 360 # Contient les valeurs des angles des vecteurs (U,V) dans le plan hz en °
 
+    for angle in theta_deg:
+        k = int(angle//(360/nbr_zones)) # Indice de la zone dans laquelle se trouve angle
+        decompte[k] += 1
 
+    densite = decompte/N
+    # print(densite*100)
+    t = np.array([10*k for k in range(0,nbr_zones)])*np.pi/180.0
+    ax = plt.subplot(111, projection='polar')
+    ax.set_thetagrids(angles=np.arange(0, 360, 45), labels=["E", "N-E", "N", "N-W", "W", "S-W", "S", "S-E"])
+    ax.bar(t, densite*100, width = 2*np.pi/nbr_zones) # Chaque zone occupe 1/nbr_zones du cercle
+    plt.show()
 
+def windrose1(U,V):     # Windrose
+    theta_deg = theta(U,-V)*180/np.pi + 360
+    ax = WindroseAxes.from_ax()
+    norm_horizontales = norme(U,V)
+    ax.bar(theta_deg-90, norm_horizontales, normed=True, opening=0.6 )
+    ax.set_legend()
+    plt.show()
 
+## Visualisation
 
+from Parseur import ParseurSonique
 
-
-
-
+U,V,W = ParseurSonique("/Users/aubin/OneDrive/1A/Lidar/Work/1510301.I55.txt")
+trace_vitesse1(U,V)
+trace_vitesse2(U,V)
+plot_theta(U,V)
+windrose0(U,V,36)
+windrose1(U,V)
