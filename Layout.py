@@ -9,7 +9,7 @@ import matplotlib.pyplot as plt
 
 sns.set(color_codes=True)
 
-# path = "/Users/aubin/OneDrive/1A/Lidar/Work/"
+# path : adresse du dossier Work
 
 def Layout(path,show):
     _, ax = plt.subplots()
