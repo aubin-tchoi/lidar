@@ -1,5 +1,3 @@
-# Visualisation des mesures de vitesse prises par l'anémomètre Sonique
-
 import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib import cm
@@ -14,7 +12,7 @@ def norme(x,y):
     return np.sqrt(x**2+y**2)
 
 def theta(x,y):
-    return -np.arccos(x/norme(x,y)) #ici arccos bijectif car tm dans cadre inf
+    return np.pi - np.arccos(x/norme(x,y)) # ici arccos bijectif car tm dans cadre inf
 
 # Tracé des vitesses
 
@@ -41,6 +39,8 @@ def trace_vitesse2(U,V):
 def plot_theta(U,V):
     N = len(U)
     theta0 = theta(U,V)
+    if min(theta0) < 0:
+        theta0 += 2*np.pi
     norm_horizontales = norme(U,V)
     cm = plt.cm.get_cmap('Spectral')
     ax = plt.subplot(111, projection='polar')
@@ -54,7 +54,9 @@ def windrose0(U,V,nbr_zones):   # Windrose "à la main" sans la valeur des vites
 
     N = len(U)
     decompte = np.zeros(nbr_zones)
-    theta_deg = theta(U,-V)*180/np.pi + 360 # Contient les valeurs des angles des vecteurs (U,V) dans le plan hz en °
+    theta_deg = theta(U,-V)*180/np.pi # Contient les valeurs des angles des vecteurs (U,V) dans le plan hz en °
+    if min(theta_deg) < 0:
+        theta_deg += 360
 
     for angle in theta_deg:
         k = int(angle//(360/nbr_zones)) # Indice de la zone dans laquelle se trouve angle
@@ -69,14 +71,20 @@ def windrose0(U,V,nbr_zones):   # Windrose "à la main" sans la valeur des vites
     plt.show()
 
 def windrose1(U,V):     # Windrose
-    theta_deg = theta(U,-V)*180/np.pi + 360
+    theta_deg = theta(U,-V)*180/np.pi
+    if min(theta_deg) < 0:
+        theta_deg += 360
     ax = WindroseAxes.from_ax()
     norm_horizontales = norme(U,V)
-    ax.bar(theta_deg-90, norm_horizontales, normed=True, opening=0.6 )
-    ax.set_legend()
+    ax.bar(theta_deg-90, norm_horizontales, normed=True, opening=0.8)
+    # ax.set_legend()
     plt.show()
 
 ## Visualisation
+
+import os
+
+os.chdir("/Users/aubin/OneDrive/1A/Lidar/")
 
 from Parseur import ParseurSonique
 
