@@ -20,12 +20,30 @@ def Projection(U,V,W,x,y,z,xL,yL,zL):
         R.append(U[k]*np.sin(theta)*np.cos(phi) + V[k]*np.cos(theta)*np.cos(phi) + W[k]*np.sin(phi))
     return R
 
-# Renvoit la valeur de vitesse radiale du Lidar à proximité du mât
+# Renvoit un tuple correspondant aux intervalles de mesure en r, theta et phi
+
+def Pas(L):
+    r0 = L[5][0]
+    theta0 = L[3][0]
+    phi0 = L[4][0]
+    dr, dtheta, dphi = abs(L[5][1] - r0), abs(L[3][1] - theta0), abs(L[4][1] - phi0)
+    for k in range(len(L[0])):
+        if 0 < abs(L[5][k] - r0) < dr:
+            dr = abs(L[5][k] - r0)
+        if 0 < abs(L[3][k] - theta0) < dtheta:
+            dtheta = abs(L[3][k] - theta0)
+        if 0 < abs(L[4][k] - phi0) < dphi:
+            dphi = abs(L[4][k] - phi0)
+    return dr, dtheta, dphi
+
+
+# Renvoit la valeur de vitesse radiale du Lidar au niveau du mat (en interpolant des valeurs prises à proximité du mât)
 
 def Interpolation(L,x,y,z,xL,yL,zL):
     rho, theta, phi = cart_to_pol(x,y,z,xL,yL,zL)
+    dr, dtheta, dphi = Pas(L)
     N = len(L[0])
+    C = []
     for k in range(N):
-
-
-
+        if abs(L[5][k] - rho) <= dr/2 and abs(L[3][k] - theta) <= dtheta/2 and abs(L[4][k] - phi) <= dphi/2:
+            C.append(k)
