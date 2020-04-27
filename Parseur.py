@@ -68,6 +68,4 @@ def ParseurLidar(path):
 
     file.close()
 
-    T = [np.vectorize(np.cos)(L[3]), np.vectorize(np.sin)(L[3]), np.vectorize(np.cos)(L[4]), np.vectorize(np.sin)(L[4])]
-
-    return L, T
+    return L
