@@ -1,26 +1,8 @@
-## Comparaison des valeurs de vent obtenues
+# main
 
 import numpy as np
 import os
 import builtins
-
-"""
-On va projeter la vitesse mesurée par l'anémomètre sur le vecteur radial :
-u.er = UsinOcosP + VcosOcosP + WsinP
-u(k).er(l) = U[k]T[1][l]T[2][l] + V[k]T[0][k]T[2][l] + W[k]T[3][l]
--> Reste à faire le bon choix de k et l : la discrétisation des deux champs n'est pas la même
-On va choisir des lignes de L proches en rho (range), theta (azimuth) et phi (élevation)
-"""
-
-# ---------- Fonctions utiles ----------
-
-# Calcul des coordonnées sphériques d'un point désigné par ses coordonnées cartésiennes
-
-def cart_to_pol(x,y,z,xL,yL,zL):
-    rho = np.sqrt((x-xL)**2 + (y-yL)**2 + (z-zL)**2)
-    theta = np.arctan((y-yL)/(x-xL))
-    phi = np.arcsin((z-zL)/rho)
-    return rho, theta, phi
 
 # ---------- Initialisation ----------
 
@@ -35,13 +17,12 @@ os.chdir(path)
 from Parseur import *
 from Layout import *
 from Windrose import *
+from Lidar-Sonique import *
 
 # Champs des vitesses
 
 U,V,W = ParseurSonique(path1)
 L,T   = ParseurLidar(path2)
-
- # rho, theta et phi sont calculés à partir de cette origine (position du lidar)
 
 # ---------- Représentations ----------
 
@@ -58,4 +39,3 @@ if rep.upper() == "Y":
 elif rep.upper() == "N":
     x,y,xL,yL = Layout(path0,False)
 
-rho, theta, phi = cart_to_pol(x,y,z,xL,yL,zL)
