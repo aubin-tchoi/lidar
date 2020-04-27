@@ -85,7 +85,7 @@ def Interpolation_pas_regulier(L,x,y,z,xL,yL,zL):
     V = 0
     for k in range(n):
         V += L[6][k]
-    V = V/n     # Moyenne arithmétique de la vitesse en tous les points de C (
+    V = V/n     # Moyenne arithmétique de la vitesse en tous les points de C
     return V
 
 def Interpolation(L,x,y,z,xL,yL,zL):
