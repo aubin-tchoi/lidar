@@ -44,7 +44,7 @@ def test_pas_regulier(L):
     bool = True
     for k in range(N):
         if abs(L[5][k]/dr - int(L[5][k]/dr)) > 0.001:   # L[5][k]/dr est entier si sa partie décimale est égale à 0
-            print("r n'évolue pas par pas réguliers'")
+            print("r n'évolue pas par pas réguliers")
             print("Pas : " + str(dr) + ", " + "r = " + str(L[5][k]))
             bool = False
             break
@@ -56,7 +56,7 @@ def test_pas_regulier(L):
             break
     for k in range(N):
         if abs(L[4][k]/dphi - int(L[4][k]/dphi)) > 0.001:
-            print("phi n'evolue pas par pas réguliers'")
+            print("phi n'evolue pas par pas réguliers")
             print("Pas : " + str(dphi) + ", " + "phi = " + str(L[4][k]))
             bool = False
             break
