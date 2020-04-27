@@ -22,7 +22,7 @@ from Lidar-Sonique import *
 # Champs des vitesses
 
 U,V,W = ParseurSonique(path1)
-L,T   = ParseurLidar(path2)
+L     = ParseurLidar(path2)
 
 # ---------- Représentations ----------
 
@@ -39,3 +39,8 @@ if rep.upper() == "Y":
 elif rep.upper() == "N":
     x,y,xL,yL = Layout(path0,False)
 
+z  = 55 # Altitude du mât
+zL = 0  # Altitude du Lidar
+
+R = Projection(U,V,W,x,y,z,xL,yL,zL)
+V = Interpolation(L,x,y,z,xL,yL,zL)
