@@ -19,34 +19,45 @@ path2 = path0 + "WLS200s-15_radial_wind_data_2015-04-13_01-00-00.csv"
 # On reprend les fonctions des fichiers annexes pour lire les données
 
 os.chdir(path)
-from Parseur import *
 from Layout import *
-# from Windrose import *
+from Parseur import *
 from Comparaison import *
+# from Windrose import *
 
 # Champs des vitesses
 
 U,V,W = ParseurSonique(path1)
 L     = ParseurLidar(path2)
 
+z  = 55 # Altitude du mât
+zL = 0  # Altitude du Lidar
+
 # ---------- Représentations ----------
+
 """
-rep = builtins.input("Windrose (Y/N) ? ") # Rose des vents
+rep = builtins.input("Display Windrose (Y/N) ? ") # Rose des vents
 
 if rep.upper() == "Y":
     plot_theta(U,V,121)
     windrose0(U,V,122)
 """
-rep = builtins.input("Layout (Y/N) ? ") # Position du mât, du Lidar et des éoliennes
+rep = builtins.input("Display Layout (Y/N) ? ") # Position du mât, du Lidar et des éoliennes
 
 if rep.upper() == "Y":
     x,y,xL,yL = Layout(path0,True)
 elif rep.upper() == "N":
     x,y,xL,yL = Layout(path0,False)
 
-z  = 55 # Altitude du mât
-zL = 0  # Altitude du Lidar
+# ---------- Traitement des données ----------
+
+# Anémomètre sonique
 
 R = Projection(U,V,W,x,y,z,xL,yL,zL) # Valeurs des vitesses radiales acquises par l'anémomètre
+R_moy = sum(R)/len(R)
+R_sigma = np.sqrt(sum([v**2 for v in R]))
+
+# Lidar
+"""
 if test_pas_regulier(L):
     V = Interpolation_pas_regulier(L,x,y,z,xL,yL,zL)  # Valeur de la vitesse radiale à proximité du mât telle qu'acquise par le Lidar
+"""
