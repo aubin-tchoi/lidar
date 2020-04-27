@@ -3,8 +3,8 @@
 import re
 import numpy as np
 
-# path1  = "/Users/aubin/Documents/1A/Lidar/Work/1510301.I55.txt"
-# path2  = "/Users/aubin/Documents/1A/Lidar/Work/WLS200s-15_radial_wind_data_2015-04-13_01-00-00.csv"
+# path1 : adresse du fichier 1510301.I55.txt
+# path2 : adresse du fichier WLS200s-15_radial_wind_data_2015-04-13_01-00-00.csv
 
 def ParseurSonique(path):
 
@@ -67,5 +67,7 @@ def ParseurLidar(path):
                 L[j-2].append(float(polar[j]))
 
     file.close()
+
+    T = [np.vectorize(np.cos)(L[3]), np.vectorize(np.sin)(L[3]), np.vectorize(np.cos)(L[4]), np.vectorize(np.sin)(L[4])]
 
     return L
