@@ -20,10 +20,10 @@ def Projection(U,V,W,x,y,z,xL,yL,zL):
         R.append(U[k]*np.sin(theta)*np.cos(phi) + V[k]*np.cos(theta)*np.cos(phi) + W[k]*np.sin(phi))
     return R
 
-# Renvoit un tuple correspondant aux intervalles entre chaque mesure de r, de theta ou de phi
+# Renvoit un tuple correspondant aux intervalles entre chaque mesure de r, de theta ou de phi (min(a,b) pour a,b dans liste tels que a != b)
 
 def Pas(L):
-    def quicksort(x):   # C'est vraiment un quicksort
+    def quicksort(x):
         if len(x) == 1 or len(x) == 0:
             return x
         else:
@@ -38,11 +38,21 @@ def Pas(L):
             second_part = quicksort(x[i+1:])
             first_part.append(x[i])
             return first_part + second_part
-    N = len(L[0])
-    r, theta, phi = quicksort(L[5]), quicksort(L[3]), quicksort(L[4])
-    dr     = min([r[k] - r[k-1] for k in range(2,N)])
-    dtheta = min([theta[k] - theta[k-1] for k in range(2,N)])
-    dphi   = min([phi[k] - phi[k-1] for k in range(2,N)])
+
+    r0, theta0, phi0 = [], [], []   # Contiendront les différentes valeurs de r, theta et phi (sans doublon)
+    for k in range(len(L[0])):
+        if L[5][k] not in r0:
+            r0.append(L[5][k])
+        if L[3][k] not in theta0:
+            theta0.append(L[3][k])
+        if L[4][k] not in phi0:
+            phi0.append(L[4][k])
+
+    r, theta, phi = quicksort(r0), quicksort(theta0), quicksort(phi0)
+    # Le plus petit écart se trouvera nécessairement entre 2 valeurs consécutives après quicksort
+    dr     = min([r[k] - r[k-1] for k in range(2,len(r))])
+    dtheta = min([theta[k] - theta[k-1] for k in range(2,len(theta))])
+    dphi   = min([phi[k] - phi[k-1] for k in range(2,len(phi))])
     return dr, dtheta, dphi
 
 # Vérifie que r, theta et phi évoluent par pas réguliers
@@ -83,9 +93,12 @@ def Interpolation_pas_regulier(L,x,y,z,xL,yL,zL):
             C.append(k)
     n = len(C)
     V = 0
-    for k in range(n):
-        V += L[6][k]
-    V = V/n     # Moyenne arithmétique de la vitesse en tous les points de C
+    try:
+        for k in range(n):
+            V += L[6][k]
+        V = V/n     # Moyenne arithmétique de la vitesse en tous les points de C (à remplacer par une autre moyenne plus représentative comme une moyenne pondérée par les distances)
+    except ZeroDivisionError:
+        print("Pas non régulier")
     return V
 
 def Interpolation(L,x,y,z,xL,yL,zL):
