@@ -5,3 +5,6 @@ Dans l'exécution du main il suffit de changer l'adresse "path" pour y mettre le
 On suppose que dans ce même dossier se trouve le dossier "Work" en ligne sur Educnet et contenant les données.
 
 Chaque fichier commence par un intitulé apportant des précisions sur son contenu.
+
+Tous les angles sont exprimés en degrés (°)
+Dans le système de repère choisi, theta correspond à l'azimuth et phi à l'élévation (ce n'est pas le repère sphérique classique, les formules en tiennent compte).
