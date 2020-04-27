@@ -75,4 +75,4 @@ def Layout(path,show):
     # Suppression du fichier .txt créé
 
     os.remove(path + "coordx_y_mat_eoliennes_ls.txt")
-    return x,y,xL,yL
+    return x, y, xL, yL
