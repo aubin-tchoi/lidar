@@ -68,14 +68,19 @@ def Interpolation_pas_regulier(L,x,y,z,xL,yL,zL):
     rho, theta, phi = cart_to_pol(x,y,z,xL,yL,zL)
     dr, dtheta, dphi = Pas(L)
     N = len(L[0])
-    C = []
+    C = []  # Liste des points proches du mât
     for k in range(N):
-        if abs(L[5][k] - rho) <= dr/2 and abs(L[3][k] - theta) <= 10*dtheta and abs(L[4][k] - phi) <= 100000*dphi:
+        if abs(L[5][k] - rho) <= dr/2 and abs(L[3][k] - theta) <= dtheta/2 and abs(L[4][k] - phi) <= dphi/2:
             C.append(k)
     v = 0
     n = len(C)
     V = 0
     for k in range(n):
         V += L[6][k]
-    V = V/n
+    V = V/n     # Moyenne arithmétique de la vitesse en tous les points de C (
+    return V
+
+def Interpolation(L,x,y,z,xL,yL,zL):
+    rho, theta, phi = cart_to_pol(x,y,z,xL,yL,zL)
+    V = 0
     return V
