@@ -6,8 +6,8 @@ import numpy as np
 
 def cart_to_pol(x,y,z,xL,yL,zL):
     rho = np.sqrt((x-xL)**2 + (y-yL)**2 + (z-zL)**2)
-    theta = np.arctan((y-yL)/(x-xL))
-    phi = np.arcsin((z-zL)/rho)
+    theta = np.arctan((y-yL)/(x-xL))*180/np.pi
+    phi = np.arcsin((z-zL)/rho)*180/np.pi
     return rho, theta, phi
 
 # Renvoit un vecteur contenant la composante radiale du vent mesuré par l'anémomètre
@@ -23,17 +23,26 @@ def Projection(U,V,W,x,y,z,xL,yL,zL):
 # Renvoit un tuple correspondant aux intervalles entre chaque mesure de r, de theta ou de phi
 
 def Pas(L):
-    r0 = L[5][0]
-    theta0 = L[3][0]
-    phi0 = L[4][0]
-    dr, dtheta, dphi = max(L[5]) - min(L[5]), max(L[3]) - min(L[3]), max(L[4]) - min(L[4])
-    for k in range(len(L[0])):
-        if 0 < abs(L[5][k] - r0) < dr:
-            dr = abs(L[5][k] - r0)
-        if 0 < abs(L[3][k] - theta0) < dtheta:
-            dtheta = abs(L[3][k] - theta0)
-        if 0 < abs(L[4][k] - phi0) < dphi:
-            dphi = abs(L[4][k] - phi0)
+    def quicksort(x):   # C'est vraiment un quicksort
+        if len(x) == 1 or len(x) == 0:
+            return x
+        else:
+            pivot = x[0]
+            i = 0
+            for j in range(len(x)-1):
+                if x[j+1] < pivot:
+                    x[j+1],x[i+1] = x[i+1], x[j+1]
+                    i += 1
+            x[0],x[i] = x[i],x[0]
+            first_part = quicksort(x[:i])
+            second_part = quicksort(x[i+1:])
+            first_part.append(x[i])
+            return first_part + second_part
+    N = len(L[0])
+    r, theta, phi = quicksort(L[5]), quicksort(L[3]), quicksort(L[4])
+    dr     = min([r[k] - r[k-1] for k in range(2,N)])
+    dtheta = min([theta[k] - theta[k-1] for k in range(2,N)])
+    dphi   = min([phi[k] - phi[k-1] for k in range(2,N)])
     return dr, dtheta, dphi
 
 # Vérifie que r, theta et phi évoluent par pas réguliers
@@ -72,7 +81,6 @@ def Interpolation_pas_regulier(L,x,y,z,xL,yL,zL):
     for k in range(N):
         if abs(L[5][k] - rho) <= dr/2 and abs(L[3][k] - theta) <= dtheta/2 and abs(L[4][k] - phi) <= dphi/2:
             C.append(k)
-    v = 0
     n = len(C)
     V = 0
     for k in range(n):
