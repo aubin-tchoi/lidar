@@ -61,3 +61,4 @@ R_sigma = np.sqrt(sum([v**2 for v in R]))
 if test_pas_regulier(L):
     V = Interpolation_pas_regulier(L,x,y,z,xL,yL,zL)  # Valeur de la vitesse radiale à proximité du mât telle qu'acquise par le Lidar
 """
+V = Interpolation(L,x,y,z,xL,yL,zL)
