@@ -16,8 +16,8 @@ path2 = path0 + "WLS200s-15_radial_wind_data_2015-04-13_01-00-00.csv"
 os.chdir(path)
 from Parseur import *
 from Layout import *
-from Windrose import *
-from Lidar-Sonique import *
+# from Windrose import *
+from Comparaison import *
 
 # Champs des vitesses
 
@@ -27,11 +27,11 @@ L     = ParseurLidar(path2)
 # ---------- Représentations ----------
 
 rep = builtins.input("Windrose (Y/N) ? ")   # Rose des vents
-
+"""
 if rep.upper() == "Y":
     plot_theta(U,V,121)
     windrose0(U,V,122)
-
+"""
 rep = builtins.input("Layout (Y/N) ? ") # Position du mât, du Lidar et des éoliennes
 
 if rep.upper() == "Y":
