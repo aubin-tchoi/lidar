@@ -1,4 +1,4 @@
-# Extraction des données à partir de fichiers
+# Extraction de données à partir des différents fichiers
 
 import re
 import numpy as np
