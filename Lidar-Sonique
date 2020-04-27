@@ -2,14 +2,6 @@
 
 import numpy as np
 
-"""
-On va projeter la vitesse mesurée par l'anémomètre sur le vecteur radial :
-u.er = UsinOcosP + VcosOcosP + WsinP
-u(k).er(l) = U[k]T[1][l]T[2][l] + V[k]T[0][k]T[2][l] + W[k]T[3][l]
--> Reste à faire le bon choix de k et l : la discrétisation des deux champs n'est pas la même
-On va choisir des lignes de L proches en rho (range), theta (azimuth) et phi (élevation)
-"""
-
 # Calcul des coordonnées sphériques d'un point désigné par ses coordonnées cartésiennes
 
 def cart_to_pol(x,y,z,xL,yL,zL):
@@ -18,8 +10,22 @@ def cart_to_pol(x,y,z,xL,yL,zL):
     phi = np.arcsin((z-zL)/rho)
     return rho, theta, phi
 
-def Projection(L,rho,theta,phi):
-    for k in range(len(L[0])):
+# Renvoit un vecteur contenant la composante radiale du vent mesuré par l'anémomètre
+
+def Projection(U,V,W,x,y,z,xL,yL,zL):
+    rho, theta, phi = cart_to_pol(x,y,z,xL,yL,zL)
+    R = []
+    N = len(U)
+    for k in range(N):
+        R.append(U[k]*np.sin(theta)*np.cos(phi) + V[k]*np.cos(theta)*np.cos(phi) + W[k]*np.sin(phi))
+    return R
+
+# Renvoit la valeur de vitesse radiale du Lidar à proximité du mât
+
+def Interpolation(L,x,y,z,xL,yL,zL):
+    rho, theta, phi = cart_to_pol(x,y,z,xL,yL,zL)
+    N = len(L[0])
+    for k in range(N):
 
 
-rho, theta, phi = cart_to_pol(x,y,z,xL,yL,zL)
+
