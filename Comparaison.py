@@ -2,6 +2,7 @@
 
 import numpy as np
 
+
 # Calcul des coordonnées sphériques d'un point désigné par ses coordonnées cartésiennes
 
 def cart_to_pol(x,y,z,xL,yL,zL):
@@ -9,6 +10,7 @@ def cart_to_pol(x,y,z,xL,yL,zL):
     theta = np.arctan((y-yL)/(x-xL))*180/np.pi
     phi = np.arcsin((z-zL)/rho)*180/np.pi
     return rho, theta, phi
+
 
 # Renvoit un vecteur contenant la composante radiale du vent mesuré par l'anémomètre
 
@@ -20,6 +22,9 @@ def Projection(U,V,W,x,y,z,xL,yL,zL):
         R.append(U[k]*np.sin(theta)*np.cos(phi) + V[k]*np.cos(theta)*np.cos(phi) + W[k]*np.sin(phi))
     return R
 
+
+# La partie qui suit permet d'obtenir un résultat rapidement en supposant que rho, theta et phi évoluent par intervalles réguliers, ce qui n'est pas le cas dans le premier exemple étudié
+"""
 # Renvoit un tuple correspondant aux intervalles entre chaque mesure de r, de theta ou de phi (min(a,b) pour a,b dans liste tels que a != b)
 
 def Pas(L):
@@ -55,6 +60,7 @@ def Pas(L):
     dphi   = min([phi[k] - phi[k-1] for k in range(2,len(phi))])
     return dr, dtheta, dphi
 
+
 # Vérifie que r, theta et phi évoluent par pas réguliers
 
 def test_pas_regulier(L):
@@ -81,6 +87,7 @@ def test_pas_regulier(L):
             break
     return bool
 
+
 # Renvoit la valeur de vitesse radiale du Lidar au niveau du mat (en interpolant des valeurs prises à proximité du mât) en supposant test_pas_regulier == True
 
 def Interpolation_pas_regulier(L,x,y,z,xL,yL,zL):
@@ -100,8 +107,31 @@ def Interpolation_pas_regulier(L,x,y,z,xL,yL,zL):
     except ZeroDivisionError:
         print("Pas non régulier")
     return V
+"""
+
+# Supposons qu'on ait trouvé les 8 points les plus proches du mât parmi les points mesurés par le Lidar,
+# Il faut alors moyenner les valeurs de vitesses en chacun de ces points
+# Cette moyenne doit rendre compte de la position du mât dans le polygône courbé reliant ces points.
+
+def moyenne(X, x, y, z):    # X correspond ici à l'ensemble des points
+    d = [np.sqrt((L[5][k]*np.sin(L[3][k])*np.cos(L[4][k]))**2 + (L[5][k]*np.cos(L[3][k])*np.cos(L[4][k]))**2 + (L[5][k]*np.sin(L[4][k]))**2) for k in X] # Distance euclidienne
+    dtot = sum(d)
+    V = 0
+    for k in X:
+        V += (1 - d[k]/dtot)*L[5][k]    # Moyenne pondérée par d
+    return V
+
+
+# Renvoit la valeur de vitesse Lidar au niveau du mât
 
 def Interpolation(L,x,y,z,xL,yL,zL):
     rho, theta, phi = cart_to_pol(x,y,z,xL,yL,zL)
+    C = [k for k in range(8)]   # Contient les indices des 8 points plus proches du mât
     V = 0
+    for k in range(8,N):    # Complexité en O(N) (On peut optimiser mais on ne passera pas en dessous de N)
+        for i in C:
+            if abs(L[5][k] - rho) < abs(L[5][i] - rho) and abs(L[3][k] - theta) < abs(L[3][i] - theta) and abs(L[4][k] - phi) < abs(L[4][i] - phi):
+                i = k
+                break   # On ne veut que C contienne des indices tous différents
+    V = moyenne(C)
     return V
