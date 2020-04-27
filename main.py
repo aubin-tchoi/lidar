@@ -26,7 +26,7 @@ L     = ParseurLidar(path2)
 
 # ---------- Représentations ----------
 
-rep = builtins.input("Windrose (Y/N) ? ")   # Rose des vents
+rep = builtins.input("Windrose (Y/N) ? ") # Rose des vents
 """
 if rep.upper() == "Y":
     plot_theta(U,V,121)
@@ -42,5 +42,5 @@ elif rep.upper() == "N":
 z  = 55 # Altitude du mât
 zL = 0  # Altitude du Lidar
 
-R = Projection(U,V,W,x,y,z,xL,yL,zL)
-V = Interpolation(L,x,y,z,xL,yL,zL)
+R = Projection(U,V,W,x,y,z,xL,yL,zL) # Valeurs des vitesses radiales acquises par l'anémomètre
+V = Interpolation(L,x,y,z,xL,yL,zL)  # Valeur de la vitesse radiale à proximité du mât telle qu'acquise par le Lidar
