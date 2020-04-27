@@ -20,13 +20,13 @@ def Projection(U,V,W,x,y,z,xL,yL,zL):
         R.append(U[k]*np.sin(theta)*np.cos(phi) + V[k]*np.cos(theta)*np.cos(phi) + W[k]*np.sin(phi))
     return R
 
-# Renvoit un tuple correspondant aux intervalles de mesure en r, theta et phi
+# Renvoit un tuple correspondant aux intervalles entre chaque mesure de r, de theta ou de phi
 
 def Pas(L):
     r0 = L[5][0]
     theta0 = L[3][0]
     phi0 = L[4][0]
-    dr, dtheta, dphi = abs(L[5][1] - r0), abs(L[3][1] - theta0), abs(L[4][1] - phi0)
+    dr, dtheta, dphi = max(L[5]) - min(L[5]), max(L[3]) - min(L[3]), max(L[4]) - min(L[4])
     for k in range(len(L[0])):
         if 0 < abs(L[5][k] - r0) < dr:
             dr = abs(L[5][k] - r0)
@@ -36,15 +36,41 @@ def Pas(L):
             dphi = abs(L[4][k] - phi0)
     return dr, dtheta, dphi
 
-# Renvoit la valeur de vitesse radiale du Lidar au niveau du mat (en interpolant des valeurs prises à proximité du mât)
+# Vérifie que r, theta et phi évoluent par pas réguliers
 
-def Interpolation(L,x,y,z,xL,yL,zL):
+def test_pas_regulier(L):
+    N = len(L[0])
+    dr, dtheta, dphi = Pas(L)
+    bool = True
+    for k in range(N):
+        if abs(L[5][k]/dr - int(L[5][k]/dr)) > 0.001:   # L[5][k]/dr est entier si sa partie décimale est égale à 0
+            print("r n'évolue pas par pas réguliers'")
+            print("Pas : " + str(dr) + ", " + "r = " + str(L[5][k]))
+            bool = False
+            break
+    for k in range(N):
+        if abs(L[3][k]/dtheta - int(L[3][k]/dtheta)) > 0.001:
+            print("theta n'evolue pas par pas réguliers")
+            print("Pas : " + str(dphi) + ", " + "theta = " + str(L[3][k]))
+            bool = False
+            break
+    for k in range(N):
+        if abs(L[4][k]/dphi - int(L[4][k]/dphi)) > 0.001:
+            print("phi n'evolue pas par pas réguliers'")
+            print("Pas : " + str(dphi) + ", " + "phi = " + str(L[4][k]))
+            bool = False
+            break
+    return bool
+
+# Renvoit la valeur de vitesse radiale du Lidar au niveau du mat (en interpolant des valeurs prises à proximité du mât) en supposant test_pas_regulier == True
+
+def Interpolation_pas_regulier(L,x,y,z,xL,yL,zL):
     rho, theta, phi = cart_to_pol(x,y,z,xL,yL,zL)
     dr, dtheta, dphi = Pas(L)
     N = len(L[0])
     C = []
     for k in range(N):
-        if abs(L[5][k] - rho) <= dr/2 and abs(L[3][k] - theta) <= dtheta/2 and abs(L[4][k] - phi) <= dphi/2:
+        if abs(L[5][k] - rho) <= dr/2 and abs(L[3][k] - theta) <= 10*dtheta and abs(L[4][k] - phi) <= 100000*dphi:
             C.append(k)
     v = 0
     n = len(C)
