@@ -1,3 +1,5 @@
+# Windrose
+
 import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib import cm
@@ -36,7 +38,7 @@ def trace_vitesse2(U,V):
 
 # On associe un vecteur vitesse aux composantes U et V-> on affiche ces points sur une carte pour savoir d'où proviennent les vents. L'échelle de couleur donne la vitesse du vent (norme du vecteur (U,V))
 
-def plot_theta(U,V):
+def plot_theta(U,V,subplot):
     N = len(U)
     theta0 = theta(U,V)
     if min(theta0) < 0:
@@ -50,7 +52,7 @@ def plot_theta(U,V):
 
 # On essaie de créer une rose des vents : on compte la densité de vents qui proviennent de chaque direction (N,N-E,E, etc) en découpant un cercle en différents quartiers.
 
-def windrose0(U,V,nbr_zones):   # Windrose "à la main" sans la valeur des vitesses
+def windrose0(U,V,nbr_zones,subplot):   # Windrose "à la main" sans la valeur des vitesses
 
     N = len(U)
     decompte = np.zeros(nbr_zones)
@@ -65,7 +67,7 @@ def windrose0(U,V,nbr_zones):   # Windrose "à la main" sans la valeur des vites
     densite = decompte/N
     # print(densite*100)
     t = np.array([360/nbr_zones*k for k in range(0,nbr_zones)])*np.pi/180.0 # 360/nbr_zones : largeur d'une zone
-    ax = plt.subplot(111, projection='polar')
+    ax = plt.subplot(subplot, projection='polar')
     ax.set_thetagrids(angles=np.arange(0, 360, 45), labels=["E", "N-E", "N", "N-W", "W", "S-W", "S", "S-E"])
     ax.bar(t, densite*100, width = 2*np.pi/nbr_zones) # Chaque zone occupe 1/nbr_zones du cercle
     plt.show()
@@ -79,18 +81,3 @@ def windrose1(U,V):     # Windrose
     ax.bar(theta_deg-90, norm_horizontales, normed=True, opening=0.8)
     # ax.set_legend()
     plt.show()
-
-## Visualisation
-
-import os
-
-os.chdir("/Users/aubin/OneDrive/1A/Lidar/")
-
-from Parseur import ParseurSonique
-
-U,V,W = ParseurSonique("/Users/aubin/OneDrive/1A/Lidar/Work/1510301.I55.txt")
-trace_vitesse1(U,V)
-trace_vitesse2(U,V)
-plot_theta(U,V)
-windrose0(U,V,36)
-windrose1(U,V)
