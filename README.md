@@ -6,5 +6,5 @@ On suppose que dans ce même dossier se trouve le dossier "Work" en ligne sur Ed
 
 Chaque fichier commence par un intitulé apportant des précisions sur son contenu.
 
-Tous les angles sont exprimés en degrés (°)
+Tous les angles sont exprimés en degrés (°).
 Dans le système de repère choisi, theta correspond à l'azimuth et phi à l'élévation (ce n'est pas le repère sphérique classique, les formules en tiennent compte).
