@@ -36,7 +36,6 @@ def Pas(L):
             dphi = abs(L[4][k] - phi0)
     return dr, dtheta, dphi
 
-
 # Renvoit la valeur de vitesse radiale du Lidar au niveau du mat (en interpolant des valeurs prises à proximité du mât)
 
 def Interpolation(L,x,y,z,xL,yL,zL):
