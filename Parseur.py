@@ -1,22 +1,22 @@
-# Extraction des données depuis les différents fichiers
+## Lidar
 
 import re
 import numpy as np
 
-# chemin1  = "/Users/aubin/Documents/1A/Lidar/Work/1510301.I55.txt"
-# chemin2  = "/Users/aubin/Documents/1A/Lidar/Work/WLS200s-15_radial_wind_data_2015-04-13_01-00-00.csv"
+# path1  = "/Users/aubin/Documents/1A/Lidar/Work/1510301.I55.txt"
+# path2  = "/Users/aubin/Documents/1A/Lidar/Work/WLS200s-15_radial_wind_data_2015-04-13_01-00-00.csv"
 
-def ParseurSonique(chemin):
+def ParseurSonique(path):
 
-    fichier = open(chemin,'r')
+    file = open(path,'r')
 
-    ligne = fichier.readline()                # On passe la première ligne
+    line = file.readline()                # On passe la première ligne
 
-    n = len(open(chemin).readlines()) - 1     # Nombre de lignes dans le .txt (moins la première ligne)
+    n = len(open(path).readlines()) - 1     # Nombre de lignes dans le .txt (moins la première ligne)
     U0, V0, W0 = [], [], []
     for i in range(n):
-        ligne = fichier.readline()
-        uvwt = ligne.replace(';','').replace(',',' ').split()
+        line = file.readline()
+        uvwt = line.replace(';','').replace(',',' ').split()
         U0.append(float(uvwt[0]))
         V0.append(float(uvwt[1]))
         W0.append(float(uvwt[2]))
@@ -24,19 +24,19 @@ def ParseurSonique(chemin):
     V = np.array(V0)
     W = np.array(W0)
 
-    fichier.close()
+    file.close()
     return U, V, W
 
-def ParseurLidar(chemin):
+def ParseurLidar(path):
 
-    fichier = open(chemin,'r')
+    file = open(path,'r')
 
-    ligne = fichier.readline()                # On passe la première ligne
+    line = file.readline()                # On passe la première ligne
 
-    n = len(open(chemin).readlines()) - 1     # Nombre de lignes dans le .csv (moins la première ligne)
+    n = len(open(path).readlines()) - 1     # Nombre de lignes dans le .csv (moins la première ligne)
 
-    ligne = fichier.readline()
-    polar = ligne.replace(';',' ').replace(',',' ').split()
+    line = file.readline()
+    polar = line.replace(';',' ').replace(',',' ').split()
     k     = len(polar)                        # Nombre de valeurs à extraire de chaque ligne (détaillées dans la première ligne)
 
     intorfloat = [2,3,4,13]                   # Certaines données sont entières
@@ -58,15 +58,15 @@ def ParseurLidar(chemin):
             L.append([float(polar[j])])
 
     for i in range(n-1):
-        ligne = fichier.readline()
-        polar = ligne.replace(';',' ').replace(',',' ').split()
+        line = file.readline()
+        polar = line.replace(';',' ').replace(',',' ').split()
         for j in range(2,k):
             if j in intorfloat:
                 L[j-2].append(int(polar[j]))
             elif j not in intorfloat:
                 L[j-2].append(float(polar[j]))
 
-    fichier.close()
+    file.close()
 
     T = [np.vectorize(np.cos)(L[3]), np.vectorize(np.sin)(L[3]), np.vectorize(np.cos)(L[4]), np.vectorize(np.sin)(L[4])]
 
