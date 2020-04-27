@@ -30,9 +30,9 @@ U,V,W = ParseurSonique(path1)
 L     = ParseurLidar(path2)
 
 # ---------- Représentations ----------
-
-rep = builtins.input("Windrose (Y/N) ? ") # Rose des vents
 """
+rep = builtins.input("Windrose (Y/N) ? ") # Rose des vents
+
 if rep.upper() == "Y":
     plot_theta(U,V,121)
     windrose0(U,V,122)
