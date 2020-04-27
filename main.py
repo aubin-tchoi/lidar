@@ -4,7 +4,10 @@ import numpy as np
 import os
 import builtins
 
-# On se place dans le repère sphérique (r, theta,phi) dans lequel theta correspond à l'azimuth (theta = 0 pointe vers le Nord) et phi à l'élévation (phi = 0 : plan horizontal)
+"""
+On se place dans le repère sphérique (r, theta, phi) ayant pour origine l'emplacement du Lidar
+et dans lequel theta correspond à l'azimuth (theta = 0 pointe vers le Nord) et phi à l'élévation (phi = 0 : plan horizontal)
+"""
 
 # ---------- Initialisation ----------
 
