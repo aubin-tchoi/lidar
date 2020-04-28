@@ -61,11 +61,13 @@ def ParseurLidar(path):
     for i in range(n-1):
         line = file.readline()
         polar = line.replace(';',' ').replace(',',' ').split()
-        for j in range(2,k):
-            if j in intorfloat:
-                L[j-2].append(int(polar[j]))
-            elif j not in intorfloat:
-                L[j-2].append(float(polar[j]))
+        if int(polar[3]) != 238:
+            for j in range(2,k):
+                if j in intorfloat:
+                    L[j-2].append(int(polar[j]))
+                elif j not in intorfloat:
+                    L[j-2].append(float(polar[j]))
+            continue
 
     file.close()
 
