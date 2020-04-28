@@ -5,16 +5,15 @@ import numpy as np
 # Calcul des coordonnées sphériques d'un point désigné par ses coordonnées cartésiennes
 
 def cart_to_pol(x,y,z,xL,yL,zL):
-    rho = np.sqrt((x-xL)**2 + (y-yL)**2 + (z-zL)**2)
+    rho   = np.sqrt((x-xL)**2 + (y-yL)**2 + (z-zL)**2)
     theta = np.arctan((x-xL)/(y-yL))*180/np.pi
-    phi = np.arcsin((z-zL)/rho)*180/np.pi
+    phi   = np.arcsin((z-zL)/rho)*180/np.pi
     return rho, theta-180, phi
 
 # Calcul de la distance euclidienne entre deux points
 
-def distance(rho,theta,phi):
-    global x, y, z
-    return np.sqrt((rho*sin(theta)*cos(phi) - x)**2 + (rho*cos(theta)*cos(phi) - y)**2 + (rho*sin(theta) - z)**2)
+def distance(x,y,z,rho,theta,phi):
+    return np.sqrt((rho*np.sin(theta)*np.cos(phi) - x)**2 + (rho*np.cos(theta)*np.cos(phi) - y)**2 + (rho*np.sin(theta) - z)**2)
 
 # Renvoit un vecteur contenant la composante radiale du vent mesuré par l'anémomètre
 
@@ -30,12 +29,12 @@ def Projection(U,V,W,x,y,z,xL,yL,zL):
 # Il faut alors moyenner les valeurs de vitesses en chacun de ces points
 # Cette moyenne doit rendre compte de la position du mât dans le polygône courbé reliant ces points.
 
-def moyenne(L, C, x, y, z):    # C correspond ici à l'ensemble des points
-    d = [distance(x,y,z,L[5][k],L[3][k],L[4][k]) for k in C] # Distance euclidienne
+def moyenne(L,C,x,y,z):    # C contient ici à l'ensemble des indices des points à moyenner
+    d = [distance(x,y,z,L[5][C[k][0]],L[3][C[k][0]],L[4][C[k][0]]) for k in range(len(C))] # Distance euclidienne
     dtot = sum(d)
     V = 0
-    for k in C:
-        V += L[5][k]/len(C)    # Moyenne pondérée par d
+    for k in range(len(C)):
+        V += L[5][C[k][0]]/len(C)    # Moyenne pondérée par d
     print(d)
     return V
 
@@ -144,15 +143,15 @@ def Interpolation_pas_regulier(L,x,y,z,xL,yL,zL):
 # 2ème approche : on détermine directement les 8 points les plus proches du mât
 
 def Interpolation8(L,x,y,z,xL,yL,zL):
-    rho, theta, phi = cart_to_pol(x,y,z,xL,yL,zL)
     # La liste C va contenir les indices des points les plus proches du mât
-    C = [[k,distance(L[5][k],L[3][k],L[4][k])] for k in range(16)] # La valeur 16 est arbitraire (elle doit seulement être supérieure à 8)
+    C = [[k,distance(x,y,z,L[5][k],L[3][k],L[4][k])] for k in range(16)] # La valeur 16 est arbitraire (elle doit seulement être supérieure à 8)
     C = sorted(C, key = lambda l: l[1]) # On range cette liste par distance
     for k in range(16,len(L[0])):
         for l in range(16):
-            d = distance(L[5][k], L[3][k], L[4][k])
+            d = distance(x,y,z,L[5][k], L[3][k], L[4][k])
             if d < C[l][1]:
                 C.insert(l,[k,d])
+                C.pop()
                 break
     C = C[0:8]
-    return moyenne(L, C, x, y, z)
+    return moyenne(L,C,x,y,z)
