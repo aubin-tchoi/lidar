@@ -155,4 +155,4 @@ def Interpolation8(L,xM,yM,zM,xL,yL,zL):
                 C.pop()
                 break
     C = C[0:8]
-    return moyenne(L,C,xM,yM,zM)
+    return -moyenne(L,C,xM,yM,zM)
