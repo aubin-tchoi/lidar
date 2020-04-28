@@ -58,10 +58,10 @@ rep = builtins.input("Display Maillage (Y/N) ? ")
 
 if rep.upper() == "Y":
     n = builtins.input("Nombre de points à représenter ? ") # 800 c'est pas mal
-    t = builtins.input("Pas de temps ? ") # 0.01 c'est pas mal
-    Maillage(L,int(n),8,float(t),xL,yL,zL,xM,yM,zM)
+    t = builtins.input("Pas de temps ? ") # 0.001 c'est pas mal
+    Maillage(L,int(n),8,float(t),xL,yL,zL,xM,yM,zM) # On ne représente qu'un point sur 17 afin de conserver une certaine lisibilité
 
-plt.close(1)
+plt.close(1) # La figure se ferme juste après avoir fini de tracer afin d'éviter de surcharger l'instance de python ouverte (elle garde en mémoire tous les points pendant toute la durée du tracé)
 
 # ---------- Traitement des données ----------
 
