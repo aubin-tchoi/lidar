@@ -11,7 +11,7 @@ et dans lequel theta correspond à l'azimuth (theta = 0 pointe vers le Nord) et 
 
 # ---------- Initialisation ----------
 
-path  = "/Users/Tchoi/OneDrive/1A/Lidar/"   # A modifier
+path  = "/Users/aubin/OneDrive/1A/Lidar/"   # A modifier
 path0 = path  + "Work/"
 path1 = path0 + "1510301.I55.txt"
 path2 = path0 + "WLS200s-15_radial_wind_data_2015-04-13_01-00-00.csv"
@@ -52,9 +52,9 @@ elif rep.upper() == "N":
 
 # Anémomètre sonique
 
-R = Projection(U,V,W,x,y,z,xL,yL,zL) # Valeurs des vitesses radiales acquises par l'anémomètre
-R_moy = sum(R)/len(R)
-R_sigma = np.sqrt(sum([v**2 for v in R]))
+R = list(map(lambda x: -x/100, Projection(U,V,W,x,y,z,xL,yL,zL))) # Valeurs des vitesses radiales acquises par l'anémomètre (en m/s)
+R_moy = sum(R)/len(R)   # Moyenne sur les valeurs obtenues
+R_sigma = np.sqrt(sum([(v - R_moy)**2 for v in R])/len(R)) # Ecart type sur les valeurs obtenues
 
 # Lidar
 """
