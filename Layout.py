@@ -69,7 +69,7 @@ def Layout(path,show):
     plt.axis('equal')
     if show:
         plt.show()
-
+    plt.clf()
     file.close()
 
     # Suppression du fichier .txt créé
