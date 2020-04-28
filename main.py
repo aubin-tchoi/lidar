@@ -3,6 +3,7 @@
 import numpy as np
 import os
 import builtins
+import matplotlib.pyplot as plt
 
 """
 On se place dans le repère sphérique (r, theta, phi) ayant pour origine l'emplacement du Lidar
@@ -51,16 +52,20 @@ if rep.upper() == "Y":
 elif rep.upper() == "N":
     xM,yM,xL,yL = Layout(path0,False)
 
+plt.close(1) # On ferme la première figure
+
 rep = builtins.input("Display Maillage (Y/N) ? ")
 
 if rep.upper() == "Y":
-    Maillage(L,500,8,0.001,xL,yL,zL,xM,yM,zM)
+    n = builtins.input("Nombre de points à représenter ?") # 800 c'est pas mal
+    t = builtins.input("Pas de temps ?") # 0.01 c'est pas mal
+    Maillage(L,n,8,t,xL,yL,zL,xM,yM,zM)
 
 # ---------- Traitement des données ----------
 
 # Anémomètre sonique
 
-R = list(map(lambda x: -x/100, Projection(U,V,W,xM,yM,zM,xL,yL,zL))) # Valeurs des vitesses radiales acquises par l'anémomètre (en m/s)
+R = Projection(U,V,W,xM,yM,zM,xL,yL,zL)*(-1/100) # Valeurs des vitesses radiales acquises par l'anémomètre (en m/s)
 R_moy = sum(R)/len(R)   # Moyenne sur les valeurs obtenues
 R_sigma = np.sqrt(sum([(v - R_moy)**2 for v in R])/len(R)) # Ecart type sur les valeurs obtenues
 
