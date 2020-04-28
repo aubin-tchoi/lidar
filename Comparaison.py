@@ -12,7 +12,8 @@ def cart_to_pol(x,y,z,xL,yL,zL):
 
 # Calcul de la distance euclidienne entre deux points
 
-def distance(x,y,z,rho,theta,phi):
+def distance(rho,theta,phi):
+    global x, y, z
     return np.sqrt((rho*sin(theta)*cos(phi) - x)**2 + (rho*cos(theta)*cos(phi) - y)**2 + (rho*sin(theta) - z)**2)
 
 # Renvoit un vecteur contenant la composante radiale du vent mesuré par l'anémomètre
@@ -144,11 +145,14 @@ def Interpolation_pas_regulier(L,x,y,z,xL,yL,zL):
 
 def Interpolation8(L,x,y,z,xL,yL,zL):
     rho, theta, phi = cart_to_pol(x,y,z,xL,yL,zL)
-    C = [k for k in range(8)]   # Contient les indices des 8 points plus proches du mât
-    V = 0
-    for k in range(8,len(L[0])):    # Complexité en O(N) (On peut optimiser mais on ne passera pas en dessous de N)
-        for i in C:
-            if abs(L[5][k] - rho) < abs(L[5][i] - rho) and abs(L[3][k] - theta) < abs(L[3][i] - theta) and abs(L[4][k] - phi) < abs(L[4][i] - phi):
-                i = k
-                break   # On veut que C contienne des indices tous différents
+    # La liste C va contenir les indices des points les plus proches du mât
+    C = [[k,distance(L[5][k],L[3][k],L[4][k])] for k in range(16)] # La valeur 16 est arbitraire (elle doit seulement être supérieure à 8)
+    C = sorted(C, key = lambda l: l[1]) # On range cette liste par distance
+    for k in range(16,len(L[0])):
+        for l in range(16):
+            d = distance(L[5][k], L[3][k], L[4][k])
+            if d < C[l][1]:
+                C.insert(l,[k,d])
+                break
+    C = C[0:8]
     return moyenne(L, C, x, y, z)
