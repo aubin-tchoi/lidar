@@ -31,13 +31,12 @@ def Projection(U,V,W,xM,yM,zM,xL,yL,zL):
 # Il faut alors moyenner les valeurs de vitesses en chacun de ces points
 # Cette moyenne doit rendre compte de la position du mât dans le polygône courbé reliant ces points.
 
-def moyenne(L,C,x,y,z):    # C contient ici à l'ensemble des indices des points à moyenner
-    d = [distance(x,y,z,L[5][C[k][0]],L[3][C[k][0]],L[4][C[k][0]]) for k in range(len(C))] # Distance euclidienne
+def moyenne(L,C,xM,yM,zM):    # C contient ici à l'ensemble des indices des points à moyenner
+    d = [distance(xM,yM,zM,L[5][C[k][0]],L[3][C[k][0]],L[4][C[k][0]]) for k in range(len(C))] # Distance euclidienne
     dtot = sum(d)
     V = 0
     for k in range(len(C)):
         V += L[6][C[k][0]]/len(C)    # Moyenne pondérée par d
-    print(d)
     return V
 
 """
