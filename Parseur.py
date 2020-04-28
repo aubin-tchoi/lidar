@@ -71,4 +71,4 @@ def ParseurLidar(path):
 
     file.close()
 
-    return L
+    return np.array(L)
