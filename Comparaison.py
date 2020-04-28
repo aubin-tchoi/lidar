@@ -23,7 +23,7 @@ def Projection(U,V,W,x,y,z,xL,yL,zL):
     return R
 
 
-# Renvoit un tuple correspondant aux intervalles entre chaque mesure de r, de theta ou de phi (min(a,b) pour a,b dans liste tels que a != b)
+# Les deux fonctions Pas renvoient un tuple correspondant aux intervalles entre chaque mesure de r, de theta ou de phi (min(a,b) pour a,b dans liste tels que a != b)
 
 def Pas_quicksort(L):  # Cette version utilise un quicksort
 
@@ -75,7 +75,7 @@ def Pas(L): # Cette version n'utilise pas de quicksort
             if L[4][k] not in phi0:
                 phi0.append(L[4][k])
 
-    dr     = (max(r0) - min(r0))/(len(r0)-1)
+    dr     = (max(r0) - min(r0))/(len(r0)-1)    # len(r0)-1 puisque l'on compte le nombre d'intervalles
     dtheta = (max(theta0) - min(theta0))/(len(theta0)-1)
     dphi   = (max(phi0) - min(phi0))/(len(phi0)-1)
     return [dr, dtheta, dphi]
