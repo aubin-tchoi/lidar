@@ -61,7 +61,7 @@ def ParseurLidar(path):
     for i in range(n-1):
         line = file.readline()
         polar = line.replace(';',' ').replace(',',' ').split()
-        if int(polar[3]) != 238:
+        if int(polar[3]) != 238:            # Un Scan ID égal à 238 correspond à une donnée non valide
             for j in range(2,k):
                 if j in intorfloat:
                     L[j-2].append(int(polar[j]))
