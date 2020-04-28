@@ -11,15 +11,16 @@ import matplotlib.pyplot as plt
 # xM, yM, zM : coordonnées du mât
 
 def Maillage(L,n,s,pause,xL,yL,zL,xM,yM,zM):
-    _, (ax1, ax2) = plt.subplots(1, 2, sharex = True)
-    ax1.set_title("y, x")
-    ax2.set_title("z, x")
-    ax1.scatter(xM, yM, s = 2*s, color = 'g', alpha = 0.75)
-    ax2.scatter(xM, zM, s = 2*s, color = 'g', alpha = 0.75)
+    _, (ax1, ax2) = plt.subplots(1, 2, sharex = True) # Les deux graphes partageront la même abscisse x
+    ax1.set_title("y, x") # Le graphe de gauche représentera y en ordonnées
+    ax2.set_title("z, x") # Le graphe de droite représentera z en ordonnées
+    # On représente le mât en vert et en beaucoup plus gros
+    ax1.scatter(xM, yM, s = 5*s, color = 'g', alpha = 0.75)
+    ax2.scatter(xM, zM, s = 5*s, color = 'g', alpha = 0.75)
     for i in range(n):
-        i = 17*i
-        rho = L[5][i]
-        theta = pi*(L[3][i]+180)/180
+        i = 17*i # On ne prend qu'une valeur sur 17 afin de conserver une certaine lisibilité
+        rho = L[5][i] # Coordonnées cartésiennes
+        theta = pi*(L[3][i] + 180)/180
         phi = pi*L[4][i]/180
         x = rho*sin(theta)*cos(phi) + xL
         y = rho*cos(theta)*cos(phi) + yL
