@@ -57,9 +57,11 @@ plt.close(1) # On ferme la première figure
 rep = builtins.input("Display Maillage (Y/N) ? ")
 
 if rep.upper() == "Y":
-    n = builtins.input("Nombre de points à représenter ?") # 800 c'est pas mal
-    t = builtins.input("Pas de temps ?") # 0.01 c'est pas mal
-    Maillage(L,n,8,t,xL,yL,zL,xM,yM,zM)
+    n = builtins.input("Nombre de points à représenter ? ") # 800 c'est pas mal
+    t = builtins.input("Pas de temps ? ") # 0.01 c'est pas mal
+    Maillage(L,int(n),8,float(t),xL,yL,zL,xM,yM,zM)
+
+plt.close(1)
 
 # ---------- Traitement des données ----------
 
