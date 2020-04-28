@@ -13,9 +13,9 @@ def cart_to_pol(x,y,z,xL,yL,zL):
 # Calcul de la distance euclidienne entre deux points (theta et phi à exprimer en °)
 
 def distance(x,y,z,rho,theta,phi):
-    theta = theta*np.pi/180 + 180
+    theta = (theta + 180)*np.pi/180
     phi = phi*np.pi/180
-    return np.sqrt((rho*np.sin(theta)*np.cos(phi) - x)**2 + (rho*np.cos(theta)*np.cos(phi) - y)**2 + (rho*np.sin(theta) - z)**2)
+    return np.sqrt((rho*np.sin(theta)*np.cos(phi) - x)**2 + (rho*np.cos(theta)*np.cos(phi) - y)**2 + (rho*np.sin(phi) - z)**2)
 
 # Renvoit un vecteur contenant la composante radiale du vent mesuré par l'anémomètre
 
@@ -32,7 +32,7 @@ def Projection(U,V,W,x,y,z,xL,yL,zL):
 # Cette moyenne doit rendre compte de la position du mât dans le polygône courbé reliant ces points.
 
 def moyenne(L,C,x,y,z):    # C contient ici à l'ensemble des indices des points à moyenner
-    d = [distance(x,y,z,L[5][C[k][0]],L[3][C[k][0]]+180,L[4][C[k][0]]) for k in range(len(C))] # Distance euclidienne
+    d = [distance(x,y,z,L[5][C[k][0]],L[3][C[k][0]],L[4][C[k][0]]) for k in range(len(C))] # Distance euclidienne
     dtot = sum(d)
     V = 0
     for k in range(len(C)):
@@ -150,7 +150,7 @@ def Interpolation8(L,x,y,z,xL,yL,zL):
     C = sorted(C, key = lambda l: l[1]) # On range cette liste par distance
     for k in range(16,len(L[0])):
         for l in range(16):
-            d = distance(x-xL,y-yL,z-zL,L[5][k], L[3][k]+180, L[4][k])
+            d = distance(x, y, z, L[5][k], L[3][k], L[4][k])
             if d < C[l][1]:
                 C.insert(l,[k,d])
                 C.pop()
