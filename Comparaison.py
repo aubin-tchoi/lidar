@@ -7,7 +7,7 @@ import numpy as np
 
 def cart_to_pol(x,y,z,xL,yL,zL):
     rho = np.sqrt((x-xL)**2 + (y-yL)**2 + (z-zL)**2)
-    theta = np.arctan((y-yL)/(x-xL))*180/np.pi
+    theta = np.arctan((x-xL)/(y-yL))*180/np.pi
     phi = np.arcsin((z-zL)/rho)*180/np.pi
     return rho, theta, phi
 
@@ -113,11 +113,11 @@ def Interpolation_pas_regulier(L,x,y,z,xL,yL,zL):
 # Cette moyenne doit rendre compte de la position du mât dans le polygône courbé reliant ces points.
 
 def moyenne(L, X, x, y, z):    # X correspond ici à l'ensemble des points
-    d = [np.sqrt((L[5][k]*np.sin(L[3][k])*np.cos(L[4][k]))**2 + (L[5][k]*np.cos(L[3][k])*np.cos(L[4][k]))**2 + (L[5][k]*np.sin(L[4][k]))**2) for k in X] # Distance euclidienne
+    d = [np.sqrt((L[5][k]*np.sin(L[3][k])*np.cos(L[4][k])-x)**2 + (L[5][k]*np.cos(L[3][k])*np.cos(L[4][k])-y)**2 + (L[5][k]*np.sin(L[4][k])-z)**2) for k in X] # Distance euclidienne
     dtot = sum(d)
     V = 0
     for k in X:
-        V += (2/len(X) - d[k]/dtot)*L[5][k]    # Moyenne pondérée par d
+        V += L[5][k]/len(X)    # Moyenne pondérée par d
     print(d)
     return V
 
@@ -132,6 +132,7 @@ def Interpolation(L,x,y,z,xL,yL,zL):
         for i in C:
             if abs(L[5][k] - rho) < abs(L[5][i] - rho) and abs(L[3][k] - theta) < abs(L[3][i] - theta) and abs(L[4][k] - phi) < abs(L[4][i] - phi):
                 i = k
-                break   # On ne veut que C contienne des indices tous différents
+                break   # On veut que C contienne des indices tous différents
     V = moyenne(L, C, x, y, z)
-    return V
+    print(rho,theta,phi)
+    return V,C
