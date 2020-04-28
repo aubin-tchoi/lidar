@@ -8,3 +8,5 @@ Chaque fichier commence par un intitulé apportant des précisions sur son conte
 
 Tous les angles sont exprimés en degrés (°).
 Dans le système de repère choisi, theta correspond à l'azimuth et phi à l'élévation (ce n'est pas le repère sphérique classique, les formules en tiennent compte).
+
+Les fonctions utilisées uniquement au sein d'un même fichier ne prennent pas de majuscule à leur nom, celle qui sont utilisées dans le main en prennent une.
