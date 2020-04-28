@@ -22,6 +22,7 @@ os.chdir(path)
 from Layout import *
 from Parseur import *
 from Comparaison import *
+from Maillage import *
 # from Windrose import *
 
 # Champs des vitesses
@@ -29,7 +30,7 @@ from Comparaison import *
 U,V,W = ParseurSonique(path1)
 L     = ParseurLidar(path2)
 
-z  = 55 # Altitude du mât
+zM = 55 # Altitude du mât
 zL = 0  # Altitude du Lidar
 
 # ---------- Représentations ----------
@@ -41,18 +42,25 @@ if rep.upper() == "Y":
     plot_theta(U,V,121)
     windrose0(U,V,122)
 """
-rep = builtins.input("Display Layout (Y/N) ? ") # Position du mât, du Lidar et des éoliennes
+# Position du mât, du Lidar et des éoliennes
+
+rep = builtins.input("Display Layout (Y/N) ? ")
 
 if rep.upper() == "Y":
-    x,y,xL,yL = Layout(path0,True)
+    xM,yM,xL,yL = Layout(path0,True)
 elif rep.upper() == "N":
-    x,y,xL,yL = Layout(path0,False)
+    xM,yM,xL,yL = Layout(path0,False)
+
+rep = builtins.input("Display Maillage (Y/N) ? ")
+
+if rep.upper() == "Y":
+    Maillage(L,500,8,0.001,xL,yL,zL,xM,yM,zM)
 
 # ---------- Traitement des données ----------
 
 # Anémomètre sonique
 
-R = list(map(lambda x: -x/100, Projection(U,V,W,x,y,z,xL,yL,zL))) # Valeurs des vitesses radiales acquises par l'anémomètre (en m/s)
+R = list(map(lambda x: -x/100, Projection(U,V,W,xM,yM,zM,xL,yL,zL))) # Valeurs des vitesses radiales acquises par l'anémomètre (en m/s)
 R_moy = sum(R)/len(R)   # Moyenne sur les valeurs obtenues
 R_sigma = np.sqrt(sum([(v - R_moy)**2 for v in R])/len(R)) # Ecart type sur les valeurs obtenues
 
@@ -61,4 +69,4 @@ R_sigma = np.sqrt(sum([(v - R_moy)**2 for v in R])/len(R)) # Ecart type sur les 
 if test_pas_regulier(L):
     V = Interpolation_pas_regulier(L,x,y,z,xL,yL,zL)  # Valeur de la vitesse radiale à proximité du mât telle qu'acquise par le Lidar
 """
-V = Interpolation8(L,x,y,z,xL,yL,zL)
+V = Interpolation8(L,xM,yM,zM,xL,yL,zL)
