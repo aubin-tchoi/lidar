@@ -14,6 +14,10 @@ def Maillage(L,n,s,pause,xL,yL,zL,xM,yM,zM):
     _, (ax1, ax2) = plt.subplots(1, 2, sharex = True) # Les deux graphes partageront la même abscisse x
     ax1.set_title("y, x") # Le graphe de gauche représentera y en ordonnées
     ax2.set_title("z, x") # Le graphe de droite représentera z en ordonnées
+    ax1.set_xlabel("x")
+    ax1.set_ylabel("y")
+    ax2.set_xlabel("x")
+    ax2.set_ylabel("z")
     # On représente le mât en vert et en beaucoup plus gros
     ax1.scatter(xM, yM, s = 5*s, color = 'g', alpha = 0.75)
     ax2.scatter(xM, zM, s = 5*s, color = 'g', alpha = 0.75)
