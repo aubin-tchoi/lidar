@@ -25,7 +25,7 @@ def Projection(U,V,W,x,y,z,xL,yL,zL):
     N = len(U)
     for k in range(N):
         R0.append(U[k]*np.sin(theta)*np.cos(phi) + V[k]*np.cos(theta)*np.cos(phi) + W[k]*np.sin(phi))
-    return R0
+    return np.array(R0)
 
 # Supposons qu'on ait trouvé les 8 points les plus proches du mât parmi les points mesurés par le Lidar,
 # Il faut alors moyenner les valeurs de vitesses en chacun de ces points
