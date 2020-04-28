@@ -12,15 +12,15 @@ def cart_to_pol(x,y,z,xL,yL,zL):
 
 # Calcul de la distance euclidienne entre deux points (theta et phi à exprimer en °)
 
-def distance(x,y,z,rho,theta,phi):
+def distance(xM,yM,zM,rho,theta,phi):
     theta = (theta + 180)*np.pi/180
     phi = phi*np.pi/180
-    return np.sqrt((rho*np.sin(theta)*np.cos(phi) - x)**2 + (rho*np.cos(theta)*np.cos(phi) - y)**2 + (rho*np.sin(phi) - z)**2)
+    return np.sqrt((rho*np.sin(theta)*np.cos(phi) - xM)**2 + (rho*np.cos(theta)*np.cos(phi) - yM)**2 + (rho*np.sin(phi) - zM)**2)
 
 # Renvoit un vecteur contenant la composante radiale du vent mesuré par l'anémomètre
 
-def Projection(U,V,W,x,y,z,xL,yL,zL):
-    rho, theta, phi = cart_to_pol(x,y,z,xL,yL,zL)
+def Projection(U,V,W,xM,yM,zM,xL,yL,zL):
+    rho, theta, phi = cart_to_pol(xM,yM,zM,xL,yL,zL)
     R0 = []
     N = len(U)
     for k in range(N):
@@ -36,7 +36,7 @@ def moyenne(L,C,x,y,z):    # C contient ici à l'ensemble des indices des points
     dtot = sum(d)
     V = 0
     for k in range(len(C)):
-        V += L[5][C[k][0]]/len(C)    # Moyenne pondérée par d
+        V += L[6][C[k][0]]/len(C)    # Moyenne pondérée par d
     print(d)
     return V
 
@@ -144,16 +144,16 @@ def Interpolation_pas_regulier(L,x,y,z,xL,yL,zL):
 
 # 2ème approche : on détermine directement les 8 points les plus proches du mât
 
-def Interpolation8(L,x,y,z,xL,yL,zL):
+def Interpolation8(L,xM,yM,zM,xL,yL,zL):
     # La liste C va contenir les indices des points les plus proches du mât
-    C = [[k,distance(x-xL,y-yL,z-zL,L[5][k],L[3][k],L[4][k])] for k in range(16)] # La valeur 16 est arbitraire (elle doit seulement être supérieure à 8)
+    C = [[k,distance(xM-xL,yM-yL,zM-zL,L[5][k],L[3][k],L[4][k])] for k in range(16)] # La valeur 16 est arbitraire (elle doit seulement être supérieure à 8)
     C = sorted(C, key = lambda l: l[1]) # On range cette liste par distance
     for k in range(16,len(L[0])):
         for l in range(16):
-            d = distance(x, y, z, L[5][k], L[3][k], L[4][k])
+            d = distance(xM, yM, zM, L[5][k], L[3][k], L[4][k])
             if d < C[l][1]:
                 C.insert(l,[k,d])
                 C.pop()
                 break
     C = C[0:8]
-    return moyenne(L,C,x,y,z)
+    return moyenne(L,C,xM,yM,zM)
