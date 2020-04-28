@@ -121,18 +121,17 @@ def moyenne(L, X, x, y, z):    # X correspond ici à l'ensemble des points
     print(d)
     return V
 
-
 # Renvoit la valeur de vitesse Lidar au niveau du mât
 
-def Interpolation(L,x,y,z,xL,yL,zL):
+def Interpolation8(L,x,y,z,xL,yL,zL):
     rho, theta, phi = cart_to_pol(x,y,z,xL,yL,zL)
     C = [k for k in range(8)]   # Contient les indices des 8 points plus proches du mât
     V = 0
     for k in range(8,len(L[0])):    # Complexité en O(N) (On peut optimiser mais on ne passera pas en dessous de N)
-        for i in C:
-            if abs(L[5][k] - rho) < abs(L[5][i] - rho) and abs(L[3][k] - theta) < abs(L[3][i] - theta) and abs(L[4][k] - phi) < abs(L[4][i] - phi):
-                i = k
+        for i in range(len(C)):
+            if abs(L[5][k] - rho) < abs(L[5][C[i]] - rho) and abs(L[3][k] - theta) < abs(L[3][C[i]] - theta) and abs(L[4][k] - phi) < abs(L[4][C[i]] - phi):
+                C[i] = k
                 break   # On veut que C contienne des indices tous différents
     V = moyenne(L, C, x, y, z)
     print(rho,theta,phi)
-    return V,C
+    return V
