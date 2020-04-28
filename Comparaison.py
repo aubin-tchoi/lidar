@@ -2,17 +2,19 @@
 
 import numpy as np
 
-# Calcul des coordonnées sphériques d'un point désigné par ses coordonnées cartésiennes
+# Calcul des coordonnées sphériques (rad) d'un point désigné par ses coordonnées cartésiennes
 
 def cart_to_pol(x,y,z,xL,yL,zL):
     rho   = np.sqrt((x-xL)**2 + (y-yL)**2 + (z-zL)**2)
-    theta = np.arctan((x-xL)/(y-yL))*180/np.pi
-    phi   = np.arcsin((z-zL)/rho)*180/np.pi
-    return rho, theta-180, phi
+    theta = np.arctan((x-xL)/(y-yL))
+    phi   = np.arcsin((z-zL)/rho)
+    return rho, theta-np.pi, phi
 
-# Calcul de la distance euclidienne entre deux points
+# Calcul de la distance euclidienne entre deux points (theta et phi à exprimer en °)
 
 def distance(x,y,z,rho,theta,phi):
+    theta = theta*np.pi/180 + 180
+    phi = phi*np.pi/180
     return np.sqrt((rho*np.sin(theta)*np.cos(phi) - x)**2 + (rho*np.cos(theta)*np.cos(phi) - y)**2 + (rho*np.sin(theta) - z)**2)
 
 # Renvoit un vecteur contenant la composante radiale du vent mesuré par l'anémomètre
@@ -154,4 +156,4 @@ def Interpolation8(L,x,y,z,xL,yL,zL):
                 C.pop()
                 break
     C = C[0:8]
-    return C
+    return moyenne(L,C,x,y,z)
