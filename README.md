@@ -32,7 +32,7 @@ L'exécution de la deuxième partie du code (après le tracé des figures) est a
 
 - [ ] Améliorer la fonction "moyenne" en pondérant les valeurs
 - [x] Obtenir un ordre de grandeur du temps écoulé entre deux mesures successives du Lidar afin de le comparer au pas de temps Sonique
-- [ ] Extraire les indices des 8 points servant à calculer la moyenne afin d'avoir une idée du temps écoulé entre ces mesures
+- [x] Extraire les indices des 8 points servant à calculer la moyenne afin d'avoir une idée du temps écoulé entre ces mesures
 
 # Schéma explicatif
 
