@@ -54,7 +54,7 @@ if rep.upper() == "Y"
 
 rep = builtins.input("Do you wish to display the layout of the windfarm (Y/N) ? ")
 
-if rep.upper() == "Y":
+if rep.upper() == "Y" or rep.upper() == "O": # O pour ceux qui voudraient dire oui
     xM,yM,xL,yL = Layout(path0,True)
 else:
     xM,yM,xL,yL = Layout(path0,False)
@@ -62,7 +62,7 @@ else:
 
 rep = builtins.input("Do you wish to display the grid of the points measured by the Lidar (Y/N) ? ")
 
-if rep.upper() == "Y":
+if rep.upper() == "Y" or rep.upper() == "O":
     sav = builtins.input("Do you wish to save it (Y/N) ? ")
     n = builtins.input("Number of points : ") # 800 c'est pas mal
     t = builtins.input("Timestep : ") # 0.001 c'est pas mal
@@ -72,7 +72,7 @@ if rep.upper() == "Y":
         print("Given set of values is invalid")
 
     # Enregistrement de la figure dans un dossier Images
-    if sav.upper() == "Y":
+    if sav.upper() == "Y" or sav.upper() == "O":
         if not os.path.exists(path + "Images/"):
             os.makedirs(path + "Images/")
         plt.savefig(path + "Images/" "Champ_Lidar.png")
