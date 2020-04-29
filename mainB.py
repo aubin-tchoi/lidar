@@ -27,7 +27,7 @@ from Maillage import Maillage
 
 path0  = path  + "Lidar+Sonic/"
 
-V = []
+S = []
 R = []
 R_avg = []
 R_sigma = []
@@ -57,7 +57,7 @@ for indice in range(1,9):
     xM,yM,xL,yL = Layout(path + "Work/",False)
     plt.close("Layout")
 
-    Maillage(L,int(len(L[0])/34),8,0.0001,xL,yL,zL,xM,yM,zM) # On ne représente qu'un point sur 17 afin de conserver une certaine lisibilité
+    Maillage(L,int(len(L[0])/850),8,0.0001,xL,yL,zL,xM,yM,zM) # On ne représente qu'un point sur 17 afin de conserver une certaine lisibilité
 
     if not os.path.exists(path + "Images/"):
         os.makedirs(path + "Images/")
@@ -69,10 +69,16 @@ for indice in range(1,9):
 
     # Anémomètre sonique
 
-    R.append(Projection(U,V,W,xM,yM,zM,xL,yL,zL)*(-1/100)) # Valeurs des vitesses radiales acquises par l'anémomètre (en m/s)
-    R_avg.append(sum(R)/len(R))   # Moyenne sur les valeurs obtenues
-    R_sigma.append(np.sqrt(sum([(v - R_avg)**2 for v in R])/len(R))) # Ecart type sur les valeurs obtenues
+    R0 = Projection(U,V,W,xM,yM,zM,xL,yL,zL)*(-1/100)
+    R.append(R0) # Valeurs des vitesses radiales acquises par l'anémomètre (en m/s)
+    R_avg.append(sum(R0)/len(R0))   # Moyenne sur les valeurs obtenues
+    R_sigma.append(np.sqrt(sum([(v - R_avg[-1])**2 for v in R0])/len(R0))) # Ecart type sur les valeurs obtenues
 
     # Lidar
 
-    V.append(Interpolation8(L,xM,yM,zM,xL,yL,zL))
+    S.append(Interpolation8(L,xM,yM,zM,xL,yL,zL))
+
+    if indice == 1:
+        print(str(indice) + "er fichier traité !")
+    else:
+        print(str(indice) + "ème fichier traité !")
