@@ -31,7 +31,7 @@ def Projection(U,V,W,xM,yM,zM,xL,yL,zL):
 # Il faut alors moyenner les valeurs de vitesses en chacun de ces points
 # Cette moyenne doit rendre compte de la position du mât dans le polygône courbé reliant ces points.
 
-def moyenne(L,C,xM,yM,zM):    # C contient ici à l'ensemble des indices des points à moyenner
+def average(L,C,xM,yM,zM):    # C contient ici à l'ensemble des indices des points à moyenner
     d = [distance(xM,yM,zM,L[5][C[k][0]],L[3][C[k][0]],L[4][C[k][0]]) for k in range(len(C))] # Distance euclidienne
     dtot = sum(d)
     V = 0
@@ -44,7 +44,7 @@ def moyenne(L,C,xM,yM,zM):    # C contient ici à l'ensemble des indices des poi
 
 # Les deux fonctions Pas renvoient un tuple correspondant aux intervalles entre chaque mesure de r, de theta ou de phi (min(a,b) pour a,b dans liste tels que a != b)
 
-def Pas_quicksort(L):  # Cette version utilise un quicksort
+def step_quicksort(L):  # Cette version utilise un quicksort
 
     def quicksort(x):
         if len(x) == 1 or len(x) == 0:
@@ -81,7 +81,7 @@ def Pas_quicksort(L):  # Cette version utilise un quicksort
     dr, dtheta, dphi = r[1] - r[0], theta[1] - theta[0], phi[1] - phi[0]
     return [dr, dtheta, dphi]
 
-def Pas(L): # Cette version n'utilise pas de quicksort
+def step(L): # Cette version n'utilise pas de quicksort
 
     r0, theta0, phi0 = [], [], []   # Contiendront les différentes valeurs de r, theta et phi (sans doublon)
     for k in range(len(L[0])):
@@ -99,9 +99,9 @@ def Pas(L): # Cette version n'utilise pas de quicksort
 
 # Vérifie que r, theta et phi évoluent par pas réguliers
 
-def test_pas_regulier(L):
+def regular_steps(L):
     N = len(L[0])
-    dr, dtheta, dphi = Pas(L)
+    dr, dtheta, dphi = step(L)
     bool = [True, True, True]
     for k in range(N):
         if abs(L[5][k]/dr - int(L[5][k]/dr)) > 0.001:   # L[5][k]/dr est entier si sa partie décimale est égale à 0
@@ -131,14 +131,14 @@ def test_pas_regulier(L):
 
 # Renvoit la valeur de vitesse Lidar au niveau du mât
 
-def Interpolation_pas_regulier(L,x,y,z,xL,yL,zL):
+def Interpolation_regular_steps(L,x,y,z,xL,yL,zL):
     dr, dtheta, dphi = Pas(L)
     N = len(L[0])
     C = []  # Liste des points proches du mât
     for k in range(N):
         if abs(L[5][k] - rho) <= dr/2 and abs(L[3][k] - theta) <= dtheta/2 and abs(L[4][k] - phi) <= dphi/2:
             C.append(k)
-    return moyenne(L, C, x, y, z)
+    return average(L, C, x, y, z)
 """
 
 # 2ème approche : on détermine directement les 8 points les plus proches du mât
@@ -155,4 +155,4 @@ def Interpolation8(L,xM,yM,zM,xL,yL,zL):
                 C.pop()
                 break
     C = C[0:8]
-    return -moyenne(L,C,xM,yM,zM)
+    return -average(L,C,xM,yM,zM)
