@@ -94,9 +94,11 @@ if Regular_steps(L):
 """
 S = Interpolation8(L,xM,yM,zM,xL,yL,zL)
 
-print("Moyenne temporelle de la vitesse mesurée par l'anémomètre (m/s) : " + str(R_avg))
-print("Ecart type sur les mesures correspondantes (m/s) : " + str(R_sigma))
-print("Vitesse mesurée au niveau du mât par le Lidar moyennée à partir de valeur à proximité (m/s) : " + str(S))
+# Affichage des valeurs
+
+print("Moyenne temporelle de la vitesse mesurée par l'anémomètre : " + str(R_avg) + " m/s")
+print("Ecart type sur les mesures correspondantes : " + str(R_sigma) + " m/s")
+print("Vitesse mesurée au niveau du mât par le Lidar moyennée à partir de valeurs prises à proximité du mât : " + str(S) + " m/s")
 plt.plot(np.arange(0,len(R)),R)
 plt.xlabel("t (u.a.)")
 plt.ylabel("RWS (m/s)")
