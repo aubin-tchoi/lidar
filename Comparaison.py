@@ -150,7 +150,7 @@ def Interpolation_regular_steps(L,x,y,z,xL,yL,zL):
 def Interpolation8(L,xM,yM,zM,xL,yL,zL):
     # La liste C va contenir les indices des points les plus proches du mât
     C = [[k,distance(xM-xL,yM-yL,zM-zL,L[5][k],L[3][k],L[4][k])] for k in range(16)] # La valeur 16 est arbitraire (elle doit seulement être supérieure à 8)
-    C = sorted(C, key = lambda l: l[1]) # On range cette liste par distance
+    C = sorted(C, key = lambda J: J[1]) # On range cette liste par distance
     for k in range(16,len(L[0])):
         for l in range(16):
             d = distance(xM, yM, zM, L[5][k], L[3][k], L[4][k])
