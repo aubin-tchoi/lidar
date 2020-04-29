@@ -2,6 +2,7 @@
 
 import numpy as np
 
+
 # Calcul des coordonnées sphériques (rad) d'un point désigné par ses coordonnées cartésiennes
 
 def cart_to_pol(x,y,z,xL,yL,zL):
@@ -10,6 +11,7 @@ def cart_to_pol(x,y,z,xL,yL,zL):
     phi   = np.arcsin((z-zL)/rho)
     return rho, theta-np.pi, phi
 
+
 # Calcul de la distance euclidienne entre deux points (theta et phi à exprimer en °)
 
 def distance(xM,yM,zM,rho,theta,phi):
@@ -17,15 +19,17 @@ def distance(xM,yM,zM,rho,theta,phi):
     phi = phi*np.pi/180
     return np.sqrt((rho*np.sin(theta)*np.cos(phi) - xM)**2 + (rho*np.cos(theta)*np.cos(phi) - yM)**2 + (rho*np.sin(phi) - zM)**2)
 
+
 # Renvoit un vecteur contenant la composante radiale du vent mesuré par l'anémomètre
 
 def Projection(U,V,W,xM,yM,zM,xL,yL,zL):
-    rho, theta, phi = cart_to_pol(xM,yM,zM,xL,yL,zL)
+    rho, theta, phi = cart_to_pol(xM,yM,zM,xL,yL,zL) # Passage en coordonnées cartésiennes
     R0 = []
     N = len(U)
     for k in range(N):
         R0.append(U[k]*np.sin(theta)*np.cos(phi) + V[k]*np.cos(theta)*np.cos(phi) + W[k]*np.sin(phi))
     return np.array(R0)
+
 
 # Supposons qu'on ait trouvé les 8 points les plus proches du mât parmi les points mesurés par le Lidar,
 # Il faut alors moyenner les valeurs de vitesses en chacun de ces points
@@ -36,7 +40,7 @@ def average(L,C,xM,yM,zM):    # C contient ici à l'ensemble des indices des poi
     dtot = sum(d)
     V = 0
     for k in range(len(C)):
-        V += L[6][C[k][0]]/len(C)    # Moyenne pondérée par d
+        V += L[6][C[k][0]]/len(C)    # Moyenne à pondérer par d (j'ai mis une moyenne arithmétique provisoirement)
     return V
 
 """
@@ -151,8 +155,8 @@ def Interpolation8(L,xM,yM,zM,xL,yL,zL):
         for l in range(16):
             d = distance(xM, yM, zM, L[5][k], L[3][k], L[4][k])
             if d < C[l][1]:
-                C.insert(l,[k,d])
+                C.insert(l,[k,d]) # La liste reste rangée par distance
                 C.pop()
                 break
-    C = C[0:8]
-    return -average(L,C,xM,yM,zM)
+    C = C[0:8] # On ne prend que les 8 points les plus proches du mât
+    return -average(L,C,xM,yM,zM) # La vitesse obtenue est une moyenne de la vitesse en chacun des 8 points
