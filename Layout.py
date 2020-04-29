@@ -13,7 +13,7 @@ sns.set(color_codes=True)
 
 def Layout(path,show):
 
-    _, ax = plt.subplots()
+    _, ax = plt.subplots(num = "Layout")
     # Conversion du .docx en .txt
 
     MY_TEXT = docx2txt.process(path + "coordx_y_mat_eoliennes_ls.docx")
@@ -64,14 +64,11 @@ def Layout(path,show):
     # Affichage
 
     if show:
-        plt.figure("L")
         plt.xlabel('x')
         plt.ylabel('y')
         plt.title('Layout du parc éolien (Mât en vert, lidar en rouge et éoliennes en bleu)')
-        plt.grid()
-        plt.axis('equal')
+        ax.grid(True)
         plt.show()
-
     file.close()
 
     # Suppression du fichier .txt créé
