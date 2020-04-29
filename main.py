@@ -93,3 +93,7 @@ if Regular_steps(L):
     V = Interpolation_regular_steps(L,xM,yM,zM,xL,yL,zL)  # Valeur de la vitesse radiale à proximité du mât telle qu'acquise par le Lidar
 """
 S = Interpolation8(L,xM,yM,zM,xL,yL,zL)
+
+print("Moyenne temporelle de la vitesse mesurée par l'anémomètre (m/s) : " + str(R_avg))
+print("Ecart type sur les mesures correspondantes (m/s) : " + str(R_sigma))
+print("Vitesse mesurée au niveau du mât par le Lidar moyennée à partir de valeur à proximité (m/s) : " + str(S))
