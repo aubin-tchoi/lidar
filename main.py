@@ -64,8 +64,8 @@ rep = builtins.input("Do you wish to display the grid of the points measured by 
 
 if rep.upper() == "Y" or rep.upper() == "O":
     sav = builtins.input("Do you wish to save it (Y/N) ? ")
-    n = builtins.input("Number of points : ") # 800 c'est pas mal
-    t = builtins.input("Timestep : ") # 0.001 c'est pas mal
+    n = builtins.input("Number of points (Recommended : 800) : ") # 800 c'est pas mal
+    t = builtins.input("Timestep (Recommended : 0.001) : ") # 0.001 c'est pas mal
     try:
         Maillage(L,int(n),8,float(t),xL,yL,zL,xM,yM,zM) # On ne représente qu'un point sur 17 afin de conserver une certaine lisibilité
     except ValueError:
