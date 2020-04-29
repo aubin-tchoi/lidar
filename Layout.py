@@ -1,9 +1,7 @@
 # Représentation de la disposition du parc éolien
 
 import os
-import re
 import docx2txt
-import numpy as np
 import seaborn as sns
 import matplotlib.pyplot as plt
 
@@ -23,8 +21,8 @@ def Layout(path,show):
 
     # Fonctions utiles
 
-    def skipline(n):
-        for i in range(n):
+    def skipline(p):
+        for i0 in range(p):
             file.readline()
 
     def placepoint(s,color):    # Suppose que les deux prochaines lignes contiennent les coordonnées du point à placer
@@ -40,9 +38,9 @@ def Layout(path,show):
     with open(path + "coordx_y_mat_eoliennes_ls.txt", "r+") as f:
         d = f.readlines()
         f.seek(0)               # Place le curseur en 0
-        for i in d:
-            if i != '\n':
-                f.write(i)
+        for I in d:
+            if I != '\n':
+                f.write(I)
         f.truncate()
 
     file = open(path + "coordx_y_mat_eoliennes_ls.txt")
