@@ -99,7 +99,7 @@ def step(L): # Cette version n'utilise pas de quicksort
 
 # Vérifie que r, theta et phi évoluent par pas réguliers
 
-def regular_steps(L):
+def Regular_steps(L):
     N = len(L[0])
     dr, dtheta, dphi = step(L)
     bool = [True, True, True]
