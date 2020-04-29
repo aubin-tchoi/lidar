@@ -12,14 +12,14 @@ et dans lequel theta correspond à l'azimuth (theta = 0 pointe vers le Nord) et 
 
 # ---------- Initialisation ----------
 
-path  = "/Users/Tchoi/OneDrive/1A/Lidar/"   # A modifier
+path  = "/Users/aubin/OneDrive/1A/Lidar/"   # A modifier
 path0 = path  + "Work/"
 path1 = path0 + "1510301.I55.txt"
 path2 = path0 + "WLS200s-15_radial_wind_data_2015-04-13_01-00-00.csv"
 
 # On reprend les fonctions des fichiers annexes pour lire les données
 
-os.chdir(path)
+os.chdir(path)  # On modifie le répertoire courant pour le répertoire contenant les fichiers .py
 from Layout import Layout
 from Parseur import ParseurSonique, ParseurLidar
 from Comparaison import Projection, Interpolation8
@@ -37,14 +37,15 @@ zL = 0  # Altitude du Lidar
 
 # ---------- Représentations ----------
 
+plt.close('all')
 """
 rep = builtins.input("Display Windrose (Y/N) ? ") # Rose des vents
 
-if rep.upper() == "Y":
+if rep.upper() == "Y"
     plot_theta(U,V,121)
     windrose0(U,V,122)
 """
-# Position du mât, du Lidar et des éoliennes
+# Position du mât et du Lidar
 
 rep = builtins.input("Do you wish to display the layout of the windfarm (Y/N) ? ")
 
@@ -52,6 +53,7 @@ if rep.upper() == "Y":
     xM,yM,xL,yL = Layout(path0,True)
 elif rep.upper() == "N":
     xM,yM,xL,yL = Layout(path0,False)
+    plt.close("L")
 
 rep = builtins.input("Do you wish to display the grid of the points measured by the Lidar (Y/N) ? ")
 
@@ -62,7 +64,13 @@ if rep.upper() == "Y":
         Maillage(L,int(n),8,float(t),xL,yL,zL,xM,yM,zM) # On ne représente qu'un point sur 17 afin de conserver une certaine lisibilité
     except(ValueError):
         print("Value given invalid")
-    plt.close(2) # La figure se ferme juste après avoir fini de tracer afin d'éviter de surcharger l'instance de python ouverte (elle garde en mémoire tous les points pendant toute la durée du tracé)
+
+    # Enregistrement de la figure dans un dossier Images
+    if not os.path.exists(path + "Images/"):
+        os.makedirs(path + "Images/")
+    plt.savefig(path + "Images/" "Champ_Lidar.png")
+
+    plt.close("M") # La figure se ferme juste après avoir fini de tracer afin d'éviter de surcharger l'instance de python ouverte (elle garde en mémoire tous les points pendant toute la durée du tracé)
 
 # ---------- Traitement des données ----------
 
