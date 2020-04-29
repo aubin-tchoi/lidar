@@ -4,7 +4,7 @@
 Dans l'exécution du main il suffit de changer l'adresse "path" pour y mettre le dossier dans lequel se trouve l'ensemble des scripts.
 On suppose que dans ce même dossier se trouve le dossier "Work" en ligne sur Educnet et contenant les données.
 
-# Convention adoptées
+## Convention adoptées
 
 Chaque fichier commence par un intitulé apportant des précisions sur son contenu.
 
@@ -13,7 +13,7 @@ Dans le système de repère choisi, theta correspond à l'azimuth et phi à l'é
 
 Les fonctions utilisées uniquement au sein d'un même fichier ne prennent pas de majuscule à leur nom, celle qui sont utilisées dans le main en prennent une.
 
-# Ce que le main fait exactement
+### Ce que le main fait exactement
 
 Je l'ai fait crash si on lui donne le mauvais chemin.
 Il extrait les données des différents fichiers pour les enregistrer dans les array U, V, W et L.
@@ -23,7 +23,7 @@ Dans R se trouve les valeurs des vitesses radiales enregistrées par l'anémomè
 R_avg et R_sigma correspondent à la moyenne et l'écart type des valeurs enregistrées.
 V correspond à la vitesse enregistrée par le Lidar à l'emplacement du mât.
 
-# N.B.
+#### N.B.
 
 Si vous êtes très fort, tout en regardant les points se tracer sur la figure "Maillage" vous arriverez à la mettre en grand écran afin d'enregistrer une image plus grande.
 L'exécution de la deuxième partie du code (après le tracé des figures) est assez longue.
