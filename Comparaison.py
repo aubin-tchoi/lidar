@@ -159,4 +159,4 @@ def Interpolation8(L,xM,yM,zM,xL,yL,zL):
                 C.pop()
                 break
     C = C[0:8] # On ne prend que les 8 points les plus proches du mât
-    return -average(L,C,xM,yM,zM) # La vitesse obtenue est une moyenne de la vitesse en chacun des 8 points
+    return [-average(L,C,xM,yM,zM), [C[p][0] for p in range(8)]]# La vitesse obtenue est une moyenne de la vitesse en chacun des 8 points
