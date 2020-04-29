@@ -39,7 +39,7 @@ def ParseurLidar(path):
     polar = line.replace(';',' ').replace(',',' ').split()
     k     = len(polar)                      # Nombre de valeurs à extraire de chaque ligne (détaillées dans la première ligne)
 
-    intorfloat = [2,3,4,13]                 # Certaines données sont entières
+    intorfloat = [2,3,4,13]                 # Certaines données sont entières (les IDs)
 
     # L = [Configuration ID, Scan ID, LOS ID, Azimuth (en °), Elevation (en °), Range (en m), RWS (en m/s), DRWS (en m/s), CNR (en dB), Confidence Index (en %), Mean Error, Status]
     # RWS  : Radial Wind Speed
