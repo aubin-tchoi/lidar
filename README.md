@@ -15,18 +15,24 @@ Les fonctions utilisées uniquement au sein d'un même fichier ne prennent pas d
 
 ### Ce que le main fait exactement
 
-Je l'ai fait crash si on lui donne le mauvais chemin.
-Il extrait les données des différents fichiers pour les enregistrer dans les array U, V, W et L.
-Il représente la disposition du parc éolien si demandé, de même pour la représentation du champ des points visités par le Lidar (et enregistre la figure sous forme d'image dans un dossier ./Images le cas échéant).
+- Je l'ai fait crash si on lui donne le mauvais chemin.
+- Il extrait les données des différents fichiers pour les enregistrer dans les array U, V, W et L.
+- Il représente la disposition du parc éolien si demandé, de même pour la représentation du champ des points visités par le Lidar (et enregistre la figure sous forme d'image dans un dossier ./Images le cas échéant).
 
-Dans R se trouve les valeurs des vitesses radiales enregistrées par l'anémomètre en m/s.
-R_avg et R_sigma correspondent à la moyenne et l'écart type des valeurs enregistrées.
-V correspond à la vitesse enregistrée par le Lidar à l'emplacement du mât.
+- Il stocke dans R les valeurs des vitesses radiales enregistrées par l'anémomètre en m/s.
+- R_avg et R_sigma correspondent à la moyenne et l'écart type des valeurs enregistrées.
+- V correspond à la vitesse enregistrée par le Lidar à l'emplacement du mât.
 
 #### N.B.
 
 Si vous êtes très fort, tout en regardant les points se tracer sur la figure "Maillage" vous arriverez à la mettre en grand écran afin d'enregistrer une image plus grande.
 L'exécution de la deuxième partie du code (après le tracé des figures) est assez longue.
+
+## Perspectives d'amélioration
+
+- [] Améliorer la fonction "moyenne" en pondérant les valeurs
+- [x] Obtenir un ordre de grandeur du temps écoulé entre deux mesures successives du Lidar afin de le comparer au pas de temps Sonique
+- [] Extraire les indices des 8 points servant à calculer la moyenne afin d'avoir une idée du temps écoulé entre ces mesures
 
 # Schéma explicatif
 
