@@ -69,7 +69,7 @@ if rep.upper() == "Y" or rep.upper() == "O":
     try:
         Maillage(L,int(n),8,float(t),xL,yL,zL,xM,yM,zM) # On ne représente qu'un point sur 17 afin de conserver une certaine lisibilité
     except ValueError:
-        print("Given set of values is invalid")
+        print("Given set of values invalid")
 
     # Enregistrement de la figure dans un dossier Images
     if sav.upper() == "Y" or sav.upper() == "O":
