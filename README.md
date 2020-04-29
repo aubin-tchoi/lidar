@@ -21,3 +21,7 @@ Il représente la disposition du parc éolien si demandé, de même pour la repr
 Dans R se trouve les valeurs des vitesses radiales enregistrées par l'anémomètre en m/s.
 R_avg et R_sigma correspondent à la moyenne et l'écart type des valeurs enregistrées.
 V correspond à la vitesse enregistrée par le Lidar à l'emplacement du mât.
+
+# NB
+
+Si vous êtes très fort, tout en regardant les points se tracer sur la figure "Maillage" vous arriverez à la mettre en grand écran afin d'enregistrer une image plus grande.
