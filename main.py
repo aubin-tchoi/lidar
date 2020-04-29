@@ -55,9 +55,9 @@ if rep.upper() == "Y"
 rep = builtins.input("Do you wish to display the layout of the windfarm (Y/N) ? ")
 
 if rep.upper() == "Y" or rep.upper() == "O": # O pour ceux qui voudraient dire oui
-    xM,yM,xL,yL = Layout(path0,True)
+    xM,yM,xL,yL = Layout(path + "Work/",True)
 else:
-    xM,yM,xL,yL = Layout(path0,False)
+    xM,yM,xL,yL = Layout(path + "Work/",False)
     plt.close("Layout")
 
 rep = builtins.input("Do you wish to display the grid of the points measured by the Lidar (Y/N) ? ")
