@@ -63,6 +63,7 @@ else:
 rep = builtins.input("Do you wish to display the grid of the points measured by the Lidar (Y/N) ? ")
 
 if rep.upper() == "Y":
+    sav = builtins.input("Do you wish to save it (Y/N) ? ")
     n = builtins.input("Number of points : ") # 800 c'est pas mal
     t = builtins.input("Timestep : ") # 0.001 c'est pas mal
     try:
@@ -71,9 +72,10 @@ if rep.upper() == "Y":
         print("Given set of values is invalid")
 
     # Enregistrement de la figure dans un dossier Images
-    if not os.path.exists(path + "Images/"):
-        os.makedirs(path + "Images/")
-    plt.savefig(path + "Images/" "Champ_Lidar.png")
+    if sav.upper() == "Y":
+        if not os.path.exists(path + "Images/"):
+            os.makedirs(path + "Images/")
+        plt.savefig(path + "Images/" "Champ_Lidar.png")
 
     plt.close("Maillage") # La figure se ferme juste après avoir fini de tracer afin d'éviter de surcharger l'instance de python ouverte (elle garde en mémoire tous les points pendant toute la durée du tracé)
 
