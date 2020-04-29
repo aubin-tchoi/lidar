@@ -53,7 +53,7 @@ if rep.upper() == "Y":
     xM,yM,xL,yL = Layout(path0,True)
 elif rep.upper() == "N":
     xM,yM,xL,yL = Layout(path0,False)
-    plt.close("L")
+    plt.close("Layout")
 
 rep = builtins.input("Do you wish to display the grid of the points measured by the Lidar (Y/N) ? ")
 
@@ -70,7 +70,7 @@ if rep.upper() == "Y":
         os.makedirs(path + "Images/")
     plt.savefig(path + "Images/" "Champ_Lidar.png")
 
-    plt.close("M") # La figure se ferme juste après avoir fini de tracer afin d'éviter de surcharger l'instance de python ouverte (elle garde en mémoire tous les points pendant toute la durée du tracé)
+    plt.close("Maillage") # La figure se ferme juste après avoir fini de tracer afin d'éviter de surcharger l'instance de python ouverte (elle garde en mémoire tous les points pendant toute la durée du tracé)
 
 # ---------- Traitement des données ----------
 
