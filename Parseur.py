@@ -1,6 +1,5 @@
 # Extraction de données à partir des différents fichiers
 
-import re
 import numpy as np
 
 # path1 : adresse du fichier 1510301.I55.txt
