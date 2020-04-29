@@ -57,7 +57,7 @@ for indice in range(1,9):
     xM,yM,xL,yL = Layout(path + "Work/",False)
     plt.close("Layout")
 
-    Maillage(L,len(L[0])/34,8,0.0001,xL,yL,zL,xM,yM,zM) # On ne représente qu'un point sur 17 afin de conserver une certaine lisibilité
+    Maillage(L,int(len(L[0])/34),8,0.0001,xL,yL,zL,xM,yM,zM) # On ne représente qu'un point sur 17 afin de conserver une certaine lisibilité
 
     if not os.path.exists(path + "Images/"):
         os.makedirs(path + "Images/")
