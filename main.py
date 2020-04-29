@@ -33,7 +33,7 @@ from Maillage import Maillage
 try:
     U,V,W = ParseurSonique(path1)
     L     = ParseurLidar(path2)
-except(FileNotFoundError):
+except FileNotFoundError:
     print("Error in path spelling")
     sys.exit()
 
@@ -68,7 +68,7 @@ if rep.upper() == "Y":
     t = builtins.input("Timestep : ") # 0.001 c'est pas mal
     try:
         Maillage(L,int(n),8,float(t),xL,yL,zL,xM,yM,zM) # On ne représente qu'un point sur 17 afin de conserver une certaine lisibilité
-    except(ValueError):
+    except ValueError:
         print("Given set of values is invalid")
 
     # Enregistrement de la figure dans un dossier Images
