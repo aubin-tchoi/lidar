@@ -28,4 +28,6 @@ V correspond à la vitesse enregistrée par le Lidar à l'emplacement du mât.
 Si vous êtes très fort, tout en regardant les points se tracer sur la figure "Maillage" vous arriverez à la mettre en grand écran afin d'enregistrer une image plus grande.
 L'exécution de la deuxième partie du code (après le tracé des figures) est assez longue.
 
+# Schéma explicatif
+
 ![alt text](https://github.com/aubin-tchoi/lidar/blob/master/Explication.jpg)
