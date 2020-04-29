@@ -47,10 +47,10 @@ def Layout(path,show):
     file = open(path + "coordx_y_mat_eoliennes_ls.txt")
 
     skipline(2)
-    x,y = placepoint(80,'g')    # Mât en vert
+    xM, yM = placepoint(80,'g')    # Mât en vert
 
     skipline(1)
-    xL,yL = placepoint(90,'r')  # Lidar en rouge
+    xL, yL = placepoint(90,'r')  # Lidar en rouge
 
     line = file.readline()
     n = 8                       # Nombre d'éoliennes
@@ -69,10 +69,10 @@ def Layout(path,show):
     plt.axis('equal')
     if show:
         plt.show()
-    plt.clf()
+
     file.close()
 
     # Suppression du fichier .txt créé
 
     os.remove(path + "coordx_y_mat_eoliennes_ls.txt")
-    return x, y, xL, yL
+    return xM, yM, xL, yL
