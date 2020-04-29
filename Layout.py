@@ -12,6 +12,7 @@ sns.set(color_codes=True)
 # path : adresse du dossier Work
 
 def Layout(path,show):
+
     _, ax = plt.subplots()
     # Conversion du .docx en .txt
 
@@ -62,12 +63,13 @@ def Layout(path,show):
 
     # Affichage
 
-    plt.xlabel('x')
-    plt.ylabel('y')
-    plt.title('Layout du parc éolien (Mât en vert, lidar en rouge et éoliennes en bleu)')
-    plt.grid()
-    plt.axis('equal')
     if show:
+        plt.figure("L")
+        plt.xlabel('x')
+        plt.ylabel('y')
+        plt.title('Layout du parc éolien (Mât en vert, lidar en rouge et éoliennes en bleu)')
+        plt.grid()
+        plt.axis('equal')
         plt.show()
 
     file.close()
@@ -75,4 +77,5 @@ def Layout(path,show):
     # Suppression du fichier .txt créé
 
     os.remove(path + "coordx_y_mat_eoliennes_ls.txt")
+
     return xM, yM, xL, yL
