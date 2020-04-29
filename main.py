@@ -89,7 +89,7 @@ R_sigma = np.sqrt(sum([(v - R_avg)**2 for v in R])/len(R)) # Ecart type sur les 
 
 # Lidar
 """
-if Regular_steps(L):
+if regular_steps(L):
     V = Interpolation_regular_steps(L,xM,yM,zM,xL,yL,zL)  # Valeur de la vitesse radiale à proximité du mât telle qu'acquise par le Lidar
 """
-V = Interpolation8(L,xM,yM,zM,xL,yL,zL)
+S = Interpolation8(L,xM,yM,zM,xL,yL,zL)
