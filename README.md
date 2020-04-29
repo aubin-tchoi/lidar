@@ -15,6 +15,7 @@ Les fonctions utilisées uniquement au sein d'un même fichier ne prennent pas d
 
 # Ce que le main fait exactement
 
+Il crash si on lui donne le mauvais chemin.
 Il extrait les données des différents fichiers pour les enregistrer dans les array U, V, W et L.
 Il représente la disposition du parc éolien si demandé, de même pour la représentation du champ des points visités par le Lidar (et enregistre la figure sous forme d'image dans un dossier ./Images le cas échéant).
 
