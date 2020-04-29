@@ -56,7 +56,8 @@ for indice in range(1,9):
     # Position du mât et du Lidar
     xM,yM,xL,yL = Layout(path + "Work/",False)
     plt.close("Layout")
-
+    
+    # Il faudra adapter le rapport 850 introduit dans la ligne suivante en fonction des performances de la machine et de les indices des 8 points les plus proches du mât
     Maillage(L,int(len(L[0])/850),8,0.0001,xL,yL,zL,xM,yM,zM) # On ne représente qu'un point sur 17 afin de conserver une certaine lisibilité
 
     if not os.path.exists(path + "Images/"):
