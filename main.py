@@ -1,9 +1,9 @@
 # main
 
-import numpy as np
 import os
 import builtins
 import matplotlib.pyplot as plt
+import numpy as np
 
 """
 On se place dans le repère sphérique (r, theta, phi) ayant pour origine l'emplacement du Lidar
@@ -12,7 +12,7 @@ et dans lequel theta correspond à l'azimuth (theta = 0 pointe vers le Nord) et 
 
 # ---------- Initialisation ----------
 
-path  = "/Users/aubin/OneDrive/1A/Lidar/"   # A modifier
+path  = "/Users/Tchoi/OneDrive/1A/Lidar/"   # A modifier
 path0 = path  + "Work/"
 path1 = path0 + "1510301.I55.txt"
 path2 = path0 + "WLS200s-15_radial_wind_data_2015-04-13_01-00-00.csv"
@@ -20,10 +20,10 @@ path2 = path0 + "WLS200s-15_radial_wind_data_2015-04-13_01-00-00.csv"
 # On reprend les fonctions des fichiers annexes pour lire les données
 
 os.chdir(path)
-from Layout import *
-from Parseur import *
-from Comparaison import *
-from Maillage import *
+from Layout import Layout
+from Parseur import ParseurSonique, ParseurLidar
+from Comparaison import Projection, Interpolation8
+from Maillage import Maillage
 # from Windrose import *
 
 # Champs des vitesses
@@ -45,31 +45,31 @@ if rep.upper() == "Y":
 """
 # Position du mât, du Lidar et des éoliennes
 
-rep = builtins.input("Display Layout (Y/N) ? ")
+rep = builtins.input("Do you wish to display the layout of the windfarm (Y/N) ? ")
 
 if rep.upper() == "Y":
     xM,yM,xL,yL = Layout(path0,True)
 elif rep.upper() == "N":
     xM,yM,xL,yL = Layout(path0,False)
 
-plt.close(1) # On ferme la première figure
-
-rep = builtins.input("Display Maillage (Y/N) ? ")
+rep = builtins.input("Do you wish to display the grid of the points measured by the Lidar (Y/N) ? ")
 
 if rep.upper() == "Y":
-    n = builtins.input("Nombre de points à représenter ? ") # 800 c'est pas mal
-    t = builtins.input("Pas de temps ? ") # 0.001 c'est pas mal
-    Maillage(L,int(n),8,float(t),xL,yL,zL,xM,yM,zM) # On ne représente qu'un point sur 17 afin de conserver une certaine lisibilité
-
-plt.close(1) # La figure se ferme juste après avoir fini de tracer afin d'éviter de surcharger l'instance de python ouverte (elle garde en mémoire tous les points pendant toute la durée du tracé)
+    n = builtins.input("Number of points : ") # 800 c'est pas mal
+    t = builtins.input("Timestep : ") # 0.001 c'est pas mal
+    try:
+        Maillage(L,int(n),8,float(t),xL,yL,zL,xM,yM,zM) # On ne représente qu'un point sur 17 afin de conserver une certaine lisibilité
+    except(ValueError):
+        print("Value given invalid")
+    plt.close(2) # La figure se ferme juste après avoir fini de tracer afin d'éviter de surcharger l'instance de python ouverte (elle garde en mémoire tous les points pendant toute la durée du tracé)
 
 # ---------- Traitement des données ----------
 
 # Anémomètre sonique
 
 R = Projection(U,V,W,xM,yM,zM,xL,yL,zL)*(-1/100) # Valeurs des vitesses radiales acquises par l'anémomètre (en m/s)
-R_moy = sum(R)/len(R)   # Moyenne sur les valeurs obtenues
-R_sigma = np.sqrt(sum([(v - R_moy)**2 for v in R])/len(R)) # Ecart type sur les valeurs obtenues
+R_avg = sum(R)/len(R)   # Moyenne sur les valeurs obtenues
+R_sigma = np.sqrt(sum([(v - R_avg)**2 for v in R])/len(R)) # Ecart type sur les valeurs obtenues
 
 # Lidar
 """
