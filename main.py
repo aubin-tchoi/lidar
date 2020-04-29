@@ -56,7 +56,7 @@ rep = builtins.input("Do you wish to display the layout of the windfarm (Y/N) ? 
 
 if rep.upper() == "Y":
     xM,yM,xL,yL = Layout(path0,True)
-elif rep.upper() == "N":
+else:
     xM,yM,xL,yL = Layout(path0,False)
     plt.close("Layout")
 
