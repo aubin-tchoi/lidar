@@ -1,5 +1,6 @@
 # main
 
+import sys
 import os
 import builtins
 import matplotlib.pyplot as plt
@@ -14,7 +15,7 @@ et dans lequel theta correspond à l'azimuth (theta = 0 pointe vers le Nord) et 
 
 path  = "/Users/aubin/OneDrive/1A/Lidar/"   # A modifier
 path0 = path  + "Work/"
-path1 = path0 + "1510301.I55.txt"
+path1 = path0 + "1510301.I55"
 path2 = path0 + "WLS200s-15_radial_wind_data_2015-04-13_01-00-00.csv"
 
 # On reprend les fonctions des fichiers annexes pour lire les données
@@ -29,8 +30,12 @@ from Maillage import Maillage
 
 # Champs des vitesses
 
-U,V,W = ParseurSonique(path1)
-L     = ParseurLidar(path2)
+try:
+    U,V,W = ParseurSonique(path1)
+    L     = ParseurLidar(path2)
+except(FileNotFoundError):
+    print("Error in path spelling")
+    sys.exit()
 
 zM = 55 # Altitude du mât
 zL = 0  # Altitude du Lidar
