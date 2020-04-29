@@ -63,7 +63,7 @@ if rep.upper() == "Y":
     try:
         Maillage(L,int(n),8,float(t),xL,yL,zL,xM,yM,zM) # On ne représente qu'un point sur 17 afin de conserver une certaine lisibilité
     except(ValueError):
-        print("Value given invalid")
+        print("Given set of values is invalid")
 
     # Enregistrement de la figure dans un dossier Images
     if not os.path.exists(path + "Images/"):
