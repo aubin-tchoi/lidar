@@ -1,13 +1,16 @@
 # Extraction de données à partir des différents fichiers
 
+import os
 import numpy as np
+from shutil import copyfile
 
 # path1 : adresse du fichier 1510301.I55.txt
 # path2 : adresse du fichier WLS200s-15_radial_wind_data_2015-04-13_01-00-00.csv
 
 def ParseurSonique(path):
 
-    file = open(path,'r')
+    copyfile(path, path + ".txt")
+    file = open(path + ".txt",'r')
 
     line = file.readline()                  # On passe la première ligne
 
@@ -24,6 +27,7 @@ def ParseurSonique(path):
     W = np.array(W0)
 
     file.close()
+    os.remove(path + ".txt")
     return U, V, W
 
 
