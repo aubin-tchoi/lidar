@@ -80,7 +80,7 @@ for indice in range(1, n+1): # On parcourt les différents fichiers
 
     # Lidar
 
-    S.append(Interpolation8(L,xM,yM,zM,xL,yL,zL))
+    S.append(Interpolation8(L,xM,yM,zM,xL,yL,zL)[0])
 
     if indice == 1:
         print(str(indice) + "er fichier traité !")
