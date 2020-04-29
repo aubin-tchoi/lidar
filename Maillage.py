@@ -1,7 +1,6 @@
 # Représentation des points en lesquels on dispose d'une mesure Lidar
 
 from numpy import cos, sin, pi
-import seaborn as sns
 import matplotlib.pyplot as plt
 
 # n : Nombre de points tracés
