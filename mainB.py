@@ -87,6 +87,8 @@ for indice in range(1, n+1): # On parcourt les différents fichiers
     else:
         print(str(indice) + "ème fichier traité !")
 
+# On enregistre les données dans un fichier que l'on pourra trouver dans le dossier Lidar+Sonique
+
 file = open(path0 + "Results.txt","w+")
 file.write("Compilation of the data extracted from the files in this directory \r\n")
 file.write("Average values of the radial wind speed (RWS) measured by Sonic and standard deviation associated for each set of data (DRWS) (m/s) \n")
