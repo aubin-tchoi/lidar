@@ -26,6 +26,7 @@ Les fonctions utilisées uniquement au sein d'un même fichier ne prennent pas d
 #### N.B.
 
 Si vous êtes très fort, tout en regardant les points se tracer sur la figure "Maillage" vous arriverez à la mettre en grand écran afin d'enregistrer une image plus grande.
+
 L'exécution de la deuxième partie du code (après le tracé des figures) est assez longue.
 
 ## Perspectives d'amélioration
