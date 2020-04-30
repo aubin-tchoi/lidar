@@ -46,7 +46,7 @@ def average(L,C,xM,yM,zM):    # C contient ici à l'ensemble des indices des poi
 """
 # 1ère approche : si le pas de discrétisation des mesures est régulier, il suffit de trouver le cube dans lequel se trouve le mât, ce qui est assez facile à la difficulté près que certaines mesures peuvent manquer
 
-# Les deux fonctions Pas renvoient un tuple correspondant aux intervalles entre chaque mesure de r, de theta ou de phi (min(a,b) pour a,b dans liste tels que a != b)
+# Les deux fonctions Pas renvoient un tuple correspondant aux intervalles entre chaque mesure de r, de theta ou de phi (min(abs(a-b)) pour a,b dans liste tels que a != b)
 
 def step_quicksort(L):  # Cette version utilise un quicksort
 
