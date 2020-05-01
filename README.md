@@ -21,7 +21,7 @@ Les fonctions utilisées uniquement au sein d'un même fichier ne prennent pas d
 
 - Il stocke dans R les valeurs des vitesses radiales enregistrées par l'anémomètre en m/s.
 - R_avg et R_sigma correspondent à la moyenne et l'écart type des valeurs enregistrées.
-- V correspond à la vitesse enregistrée par le Lidar à l'emplacement du mât.
+- S correspond à la vitesse enregistrée par le Lidar à l'emplacement du mât.
 
 #### N.B.
 
