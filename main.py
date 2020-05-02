@@ -1,106 +1,54 @@
-# main
+# Fonctions utiles à l'interprétation des données
 
-import sys
-import os
-import builtins
-import matplotlib.pyplot as plt
 import numpy as np
+import matplotlib.pyplot as plt
 
-"""
-On se place dans le repère sphérique (r, theta, phi) ayant pour origine l'emplacement du Lidar
-et dans lequel theta correspond à l'azimuth (theta = 0 pointe vers le Nord) et phi à l'élévation (phi = 0 : plan horizontal)
-"""
 
-# ---------- Initialisation ----------
+# Calcul du nombre de rayons différents parcourus pour une même valeur de theta et phi
 
-path  = "/Users/aubin/OneDrive/1A/Lidar/"   # A modifier
-path0 = path  + "Work/"
-path1 = path0 + "1510301.I55"
-path2 = path0 + "WLS200s-15_radial_wind_data_2015-04-13_01-00-00.csv"
+def Depth(L):
+    D = []
+    n = 20 # Nombre de tirages aléatoires du point de départ
+    for k in range(n):
+        c = np.random.randint(0,len(L[0]))  # Le point de départ est choisi aléatoirement
+        while L[5][c-1] < L[5][c]:          # On se place au début d'une série de mesures à theta et phi fixés
+            c -= 1
+        d = 0
+        while L[5][c+1] > L[5][c]:          # On compte le nombre de valeurs que prend rho pour cette série
+            c += 1
+            d += 1
+        D.append(d)
+    return sum(D)/len(D)                    # On regarde la moyenne des valeurs obtenues
 
-# On reprend les fonctions des fichiers annexes pour lire les données
 
-os.chdir(path)  # On modifie le répertoire courant pour le répertoire contenant les fichiers .py
-from Layout import Layout
-from Parseur import ParseurSonique, ParseurLidar
-from Comparaison import Projection, Interpolation8
-from Maillage import Maillage
-# from Comparaison import Regular_steps, Interpolation_regular_steps
-# from Windrose import *
+# Visualisation d'un histogramme des valeurs de vitesses radiales mesurées par l'anémomètre
 
-# Champs des vitesses
+def Histo(R, R_avg, n): # n : nombre de barres
 
-try:
-    U,V,W = ParseurSonique(path1)
-    L     = ParseurLidar(path2)
-except FileNotFoundError:
-    print("Error in path spelling")
-    sys.exit()
+    plt.figure("Histogramme")
+    H = np.zeros(n)
+    rmin, rmax = min(R), max(R)
 
-zM = 55 # Altitude du mât
-zL = 0  # Altitude du Lidar
+    # Remplissage de l'histogramme (j'ai comparé le temps d'exécution des deux méthodes ci dessous à l'aide de time.perf_counter() pour n = 20, 50, 100, la méthode que j'ai gardée est en moyenne 2.5 fois plus rapide et l'écart se creuse pour n grand (testé sur 50 essais à chaque fois)
+    """
+    for i in range(n):
+        H[i] = np.size(np.where([R[k] for k in np.where(R >= rmin + i*(rmax-rmin)/n)[0]] < rmin + (i+1)*(rmax-rmin)/n)[0])
+    """
+    for r in R:
+        if r == rmax:
+            H[-1] += 1 # Il n'y a que n barres et la valeur rmax est la seule qui tomberait sur la (n+1)ème barre
+        else:
+            H[int(n*(r-rmin)/(rmax-rmin))] += 1
+    H = H/len(R)    # On observe la proportion de valeur de R qui tombent dans chaque intervalle i*(rmax-rmin)/n
 
-# ---------- Représentations ----------
+    # Ajout d'une barre rouge pour la moyenne
+    M = np.zeros(2*n)
+    M[int(2*n*(R_avg - rmin)/(rmax - rmin))] = max(H)
 
-plt.close('all')
-"""
-rep = builtins.input("Display Windrose (Y/N) ? ") # Rose des vents
+    plt.bar(np.linspace(rmin,rmax,n), H, width = 4/n)
+    plt.bar(np.linspace(rmin,rmax,2*n), M, color = 'r', width = 2/n)
+    plt.xlabel("Répartition des valeurs de vitesse radiale mesurées par l'anémomètre Sonic")
+    k = 2 # Nombre de décimales affichées en abscisses
+    plt.xticks(np.linspace(rmin,rmax,int(n/2)), [str(int(10**k*el)/10**k) for el in np.linspace(rmin,rmax,int(n/2))])
+    plt.show()
 
-if rep.upper() == "Y"
-    plot_theta(U,V,121)
-    windrose0(U,V,122)
-"""
-# Position du mât et du Lidar
-
-rep = builtins.input("Do you wish to display the layout of the windfarm (Y/N) ? ")
-
-if rep.upper() == "Y" or rep.upper() == "O": # O pour ceux qui voudraient dire oui
-    xM,yM,xL,yL = Layout(path + "Work/",True)
-else:
-    xM,yM,xL,yL = Layout(path + "Work/",False)
-    plt.close("Layout")
-
-rep = builtins.input("Do you wish to display the grid of the points measured by the Lidar (Y/N) ? ")
-
-if rep.upper() == "Y" or rep.upper() == "O":
-    sav = builtins.input("Do you wish to save it (Y/N) ? ")
-    n = builtins.input("Number of points (Recommended : 800) : ") # 800 c'est pas mal
-    t = builtins.input("Timestep (Recommended : 0.001) : ") # 0.001 c'est pas mal
-    try:
-        Maillage(L,int(n),8,float(t),xL,yL,zL,xM,yM,zM) # On ne représente qu'un point sur 17 afin de conserver une certaine lisibilité
-    except ValueError:
-        print("Given set of values invalid")
-
-    # Enregistrement de la figure dans un dossier Images
-    if sav.upper() == "Y" or sav.upper() == "O":
-        if not os.path.exists(path + "Images/"):
-            os.makedirs(path + "Images/")
-        plt.savefig(path + "Images/" "Champ_Lidar.png")
-
-    plt.close("Maillage") # La figure se ferme juste après avoir fini de tracer afin d'éviter de surcharger l'instance de python ouverte (elle garde en mémoire tous les points pendant toute la durée du tracé)
-
-# ---------- Traitement des données ----------
-
-# Anémomètre sonique
-
-R = Projection(U,V,W,xM,yM,zM,xL,yL,zL)*(-1/100) # Valeurs des vitesses radiales acquises par l'anémomètre (en m/s)
-R_avg = sum(R)/len(R)   # Moyenne sur les valeurs obtenues
-R_sigma = np.sqrt(sum([(v - R_avg)**2 for v in R])/len(R)) # Ecart type sur les valeurs obtenues
-
-# Lidar
-"""
-if Regular_steps(L):
-    V = Interpolation_regular_steps(L,xM,yM,zM,xL,yL,zL)  # Valeur de la vitesse radiale à proximité du mât telle qu'acquise par le Lidar
-"""
-S, C = Interpolation8(L,xM,yM,zM,xL,yL,zL) # S : Vitesse (m/s) et C : ensemble des indices des 8 points les plus proches du mât parmi ceux pour lesquels on dispose d'une mesure Lidar
-
-# Affichage des valeurs
-
-print("Moyenne temporelle de la vitesse mesurée par l'anémomètre : " + str(R_avg) + " m/s")
-print("Ecart type sur les mesures correspondantes : " + str(R_sigma) + " m/s")
-print("Vitesse mesurée au niveau du mât par le Lidar moyennée à partir de valeurs prises à proximité du mât : " + str(S) + " m/s")
-plt.plot(np.arange(0,len(R)),R)
-plt.xlabel("t (u.a.)")
-plt.ylabel("RWS (m/s)")
-plt.title("Evolution de la vitesse radiale mesurée par l'anémomètre")
-plt.show()
