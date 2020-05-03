@@ -61,7 +61,7 @@ for indice in range(1, n+1): # On parcourt les différents fichiers
     plt.close("Layout")
 
     # Il faudra adapter le rapport 850 introduit dans la ligne suivante en fonction des performances de la machine et de les indices des 8 points les plus proches du mât
-    Maillage(L,int(len(L[0])/850),8,0.0001,xL,yL,zL,xM,yM,zM) # On ne représente qu'un point sur 17 afin de conserver une certaine lisibilité
+    Maillage(L,int(len(L[0])/340),4,0.0001,xL,yL,zL,xM,yM,zM) # On ne représente qu'un point sur 17 afin de conserver une certaine lisibilité
 
     if not os.path.exists(path + "Images/"):
         os.makedirs(path + "Images/")
@@ -80,7 +80,7 @@ for indice in range(1, n+1): # On parcourt les différents fichiers
 
     # Lidar
 
-    S.append(Interpolation8(L,xM,yM,zM,xL,yL,zL)[0])
+    S.append(Interpolation8(L,xM,yM,zM,xL,yL,zL)[0][0])
 
     if indice == 1:
         print(str(indice) + "er fichier traité !")
