@@ -39,9 +39,11 @@ def average(L,C,xM,yM,zM):    # C contient ici à l'ensemble des indices des poi
     d = [distance(xM,yM,zM,L[5][C[k][0]],L[3][C[k][0]],L[4][C[k][0]]) for k in range(len(C))] # Distance euclidienne
     dtot = sum(d)
     V = 0
+    D = 0
     for k in range(len(C)):
         V += L[6][C[k][0]]/len(C)    # Moyenne à pondérer par d (j'ai mis une moyenne arithmétique provisoirement)
-    return V
+        D += L[7][C[k][0]]/len(C)
+    return [-V, D]
 
 """
 # 1ère approche : si le pas de discrétisation des mesures est régulier, il suffit de trouver le cube dans lequel se trouve le mât, ce qui est assez facile à la difficulté près que certaines mesures peuvent manquer
@@ -159,4 +161,4 @@ def Interpolation8(L,xM,yM,zM,xL,yL,zL):
                 C.pop()
                 break
     C = C[0:8] # On ne prend que les 8 points les plus proches du mât
-    return [-average(L,C,xM,yM,zM), [C[p][0] for p in range(8)]]# La vitesse obtenue est une moyenne de la vitesse en chacun des 8 points
+    return [average(L,C,xM,yM,zM), [C[p][0] for p in range(8)]]# La vitesse obtenue est une moyenne de la vitesse en chacun des 8 points
