@@ -23,7 +23,7 @@ def Depth(L):
 
 # Visualisation d'un histogramme des valeurs de vitesses radiales mesurées par l'anémomètre
 
-def Histo(R, R_avg, n): # n : nombre de barres
+def Histo(R, R_avg, S, n): # n : nombre de barres
 
     plt.figure("Histogramme")
     H = np.zeros(n)
@@ -41,12 +41,18 @@ def Histo(R, R_avg, n): # n : nombre de barres
             H[int(n*(r-rmin)/(rmax-rmin))] += 1
     H = H/len(R)    # On observe la proportion de valeur de R qui tombent dans chaque intervalle i*(rmax-rmin)/n
 
+    plt.bar(np.linspace(rmin,rmax,n), H, width = 4/n)
+
     # Ajout d'une barre rouge pour la moyenne
     M = np.zeros(2*n)
     M[int(2*n*(R_avg - rmin)/(rmax - rmin))] = max(H)
-
-    plt.bar(np.linspace(rmin,rmax,n), H, width = 4/n)
     plt.bar(np.linspace(rmin,rmax,2*n), M, color = 'r', width = 2/n)
+
+    # Ajout d'une barre verte pour le Lidar
+    L = np.zeros(2*n)
+    L[int(2*n*(S[0] - rmin)/(rmax - rmin))] = max(H)
+    plt.bar(np.linspace(rmin,rmax,2*n), L, color = 'g', width = 2/n)
+
     plt.xlabel("Répartition des valeurs de vitesse radiale mesurées par l'anémomètre Sonic")
     k = 2 # Nombre de décimales affichées en abscisses
     plt.xticks(np.linspace(rmin,rmax,int(n/2)), [str(int(10**k*el)/10**k) for el in np.linspace(rmin,rmax,int(n/2))])
