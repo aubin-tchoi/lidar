@@ -41,6 +41,7 @@ except FileNotFoundError:
 zM = 55 # Altitude du mât
 zL = 0  # Altitude du Lidar
 
+
 # ---------- Représentations ----------
 
 plt.close('all')
@@ -80,6 +81,7 @@ if rep.upper() == "Y" or rep.upper() == "O":
 
     plt.close("Maillage") # La figure se ferme juste après avoir fini de tracer afin d'éviter de surcharger l'instance de python ouverte (elle garde en mémoire tous les points pendant toute la durée du tracé)
 
+
 # ---------- Traitement des données ----------
 
 # Anémomètre sonique
@@ -95,11 +97,13 @@ if Regular_steps(L):
 """
 S, C = Interpolation8(L,xM,yM,zM,xL,yL,zL) # S : RWS (m/s) et DRWS (m/s) et C : ensemble des indices des 8 points les plus proches du mât parmi ceux pour lesquels on dispose d'une mesure Lidar
 
-# Affichage des valeurs
+
+# ---------- Affichage des valeurs ----------
 
 print("Moyenne temporelle de la vitesse mesurée par l'anémomètre : " + str(R_avg) + " m/s")
 print("Ecart type sur les mesures correspondantes : " + str(R_sigma) + " m/s")
 print("Vitesse mesurée au niveau du mât par le Lidar moyennée à partir de valeurs prises à proximité du mât : " + str(S[0]) + " m/s")
+print("Ecart type sur les mesures correspondantes : " + str(S[1]) + " m/s")
 plt.plot(np.arange(0,len(R)),R)
 plt.xlabel("t (u.a.)")
 plt.ylabel("RWS (m/s)")
