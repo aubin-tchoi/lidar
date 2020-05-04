@@ -22,9 +22,9 @@ def Maillage(L,n,s,pause,xL,yL,zL,xM,yM,zM):
     ax2.scatter(xM, zM, s = 5*s, color = 'g', alpha = 0.75)
     for i in range(n):
         i = 17*i # On ne prend qu'une valeur sur 17 afin de conserver une certaine lisibilité
-        rho = L[5][i]
-        theta = pi*(L[3][i] + 180)/180
-        phi = pi*L[4][i]/180
+        rho = L[1][i]
+        theta = pi*L[2][i]/180
+        phi = pi*L[3][i]/180
         x = rho*sin(theta)*cos(phi) + xL # Coordonnées cartésiennes
         y = rho*cos(theta)*cos(phi) + yL
         z = rho*sin(phi) + zL
