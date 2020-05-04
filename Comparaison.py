@@ -1,6 +1,7 @@
 # Comparaison des valeurs de vent obtenues
 
 import numpy as np
+import time
 
 
 # Calcul des coordonnées sphériques (rad) d'un point désigné par ses coordonnées cartésiennes
@@ -15,7 +16,7 @@ def cart_to_pol(x,y,z,xL,yL,zL):
 # Calcul de la distance euclidienne entre deux points (theta et phi à exprimer en °)
 
 def distance(xM,yM,zM,rho,theta,phi):
-    theta = (theta + 180)*np.pi/180
+    theta = theta*np.pi/180
     phi = phi*np.pi/180
     return np.sqrt((rho*np.sin(theta)*np.cos(phi) - xM)**2 + (rho*np.cos(theta)*np.cos(phi) - yM)**2 + (rho*np.sin(phi) - zM)**2)
 
@@ -31,22 +32,38 @@ def Projection(U,V,W,xM,yM,zM,xL,yL,zL):
     return np.array(R0)
 
 
-# Supposons qu'on ait trouvé les 8 points les plus proches du mât parmi les points mesurés par le Lidar,
-# Il faut alors moyenner les valeurs de vitesses en chacun de ces points
-# Cette moyenne doit rendre compte de la position du mât dans le polygône courbé reliant ces points.
+# Renvoit la liste des indices des points les plus proches du mât
 
+def Interpolation(L,xM,yM,zM,xL,yL,zL,n,count_time):
+    tini = time.perf_counter()
+    # La liste C va contenir les indices des points les plus proches du mât
+    C = [[k,distance(xM-xL,yM-yL,zM-zL,L[1][k],L[2][k],L[3][k])] for k in range(n)] # La valeur 16 est arbitraire (elle doit seulement être supérieure à 8)
+    C = sorted(C, key = lambda J: J[1]) # On range cette liste par distance
+    for k in range(n,len(L[0])):
+        for l in range(len(C)):
+            d = distance(xM, yM, zM, L[1][k], L[2][k], L[3][k])
+            if d < C[l][1]:
+                C.insert(l,[k,d]) # La liste reste rangée par distance
+                C.pop()
+                break
+    # C = C[0:8] # On ne prend que les 8 points les plus proches du mât
+    if count_time:
+        print("Temps d'exécution de la fonction Interpolation : " + str(time.perf_counter() - tini))
+    return [C[p][0] for p in range(len(C))] # La vitesse obtenue est une moyenne de la vitesse en chacun des 8 points
+
+"""
 def average(L,C,xM,yM,zM):    # C contient ici à l'ensemble des indices des points à moyenner
-    d = [distance(xM,yM,zM,L[5][C[k][0]],L[3][C[k][0]],L[4][C[k][0]]) for k in range(len(C))] # Distance euclidienne
+    d = [distance(xM,yM,zM,L[1][C[k][0]],L[2][C[k][0]],L[3][C[k][0]]) for k in range(len(C))] # Distance euclidienne
     dtot = sum(d)
     V = 0
     D = 0
     for k in range(len(C)):
-        V += L[6][C[k][0]]/len(C)    # Moyenne à pondérer par d (j'ai mis une moyenne arithmétique provisoirement)
-        D += L[7][C[k][0]]/len(C)
+        V += L[4][C[k][0]]/len(C)    # Moyenne à pondérer par d (j'ai mis une moyenne arithmétique provisoirement)
+        D += L[5][C[k][0]]/len(C)
     return [-V, D]
 
-"""
-# 1ère approche : si le pas de discrétisation des mesures est régulier, il suffit de trouver le cube dans lequel se trouve le mât, ce qui est assez facile à la difficulté près que certaines mesures peuvent manquer
+
+# Si le pas de discrétisation des mesures est régulier, il suffit de trouver le cube dans lequel se trouve le mât, ce qui est assez facile à la difficulté près que certaines mesures peuvent manquer
 
 # Les deux fonctions Pas renvoient un tuple correspondant aux intervalles entre chaque mesure de r, de theta ou de phi (min(abs(a-b)) pour a,b dans liste tels que a != b)
 
@@ -70,12 +87,12 @@ def step_quicksort(L):  # Cette version utilise un quicksort
 
     r0, theta0, phi0 = [], [], []   # Contiendront les différentes valeurs de r, theta et phi (sans doublon)
     for k in range(len(L[0])):
-        if L[5][k] not in r0:
-            r0.append(L[5][k])
-        if L[3][k] not in theta0:
-            theta0.append(L[3][k])
-        if L[4][k] not in phi0:
-            phi0.append(L[4][k])
+        if L[1][k] not in r0:
+            r0.append(L[1][k])
+        if L[2][k] not in theta0:
+            theta0.append(L[2][k])
+        if L[3][k] not in phi0:
+            phi0.append(L[3][k])
 
     r, theta, phi = quicksort(r0), quicksort(theta0), quicksort(phi0)
 
@@ -91,12 +108,12 @@ def step(L): # Cette version n'utilise pas de quicksort
 
     r0, theta0, phi0 = [], [], []   # Contiendront les différentes valeurs de r, theta et phi (sans doublon)
     for k in range(len(L[0])):
-        if L[5][k] not in r0:
-            r0.append(L[5][k])
-        if L[3][k] not in theta0:
-            theta0.append(L[3][k])
-        if L[4][k] not in phi0:
-            phi0.append(L[4][k])
+        if L[1][k] not in r0:
+            r0.append(L[1][k])
+        if L[2][k] not in theta0:
+            theta0.append(L[2][k])
+        if L[3][k] not in phi0:
+            phi0.append(L[3][k])
 
     dr     = (max(r0) - min(r0))/(len(r0)-1)    # len(r0)-1 puisque l'on compte le nombre d'intervalles
     dtheta = (max(theta0) - min(theta0))/(len(theta0)-1)
@@ -110,25 +127,25 @@ def Regular_steps(L):
     dr, dtheta, dphi = step(L)
     bool = [True, True, True]
     for k in range(N):
-        if abs(L[5][k]/dr - int(L[5][k]/dr)) > 0.001:   # L[5][k]/dr est entier si sa partie décimale est égale à 0
+        if abs(L[1][k]/dr - int(L[1][k]/dr)) > 0.001:   # L[5][k]/dr est entier si sa partie décimale est égale à 0
             print("r n'évolue pas par pas réguliers")
-            print("Pas : " + str(dr) + ", " + "r = " + str(L[5][k]))
+            print("Pas : " + str(dr) + ", " + "r = " + str(L[1][k]))
             bool[0] = False
             break
     else:
         print("r évolue par pas réguliers")
     for k in range(N):
-        if abs(L[3][k]/dtheta - int(L[3][k]/dtheta)) > 0.001:
+        if abs(L[2][k]/dtheta - int(L[2][k]/dtheta)) > 0.001:
             print("theta n'evolue pas par pas réguliers")
-            print("Pas : " + str(dphi) + ", " + "theta = " + str(L[3][k]))
+            print("Pas : " + str(dphi) + ", " + "theta = " + str(L[2][k]))
             bool[1] = False
             break
     else:
         print("theta évolue par pas réguliers")
     for k in range(N):
-        if abs(L[4][k]/dphi - int(L[4][k]/dphi)) > 0.001:
+        if abs(L[3][k]/dphi - int(L[3][k]/dphi)) > 0.001:
             print("phi n'evolue pas par pas réguliers")
-            print("Pas : " + str(dphi) + ", " + "phi = " + str(L[4][k]))
+            print("Pas : " + str(dphi) + ", " + "phi = " + str(L[3][k]))
             bool[2] = False
             break
     else:
@@ -142,23 +159,7 @@ def Interpolation_regular_steps(L,x,y,z,xL,yL,zL):
     N = len(L[0])
     C = []  # Liste des points proches du mât
     for k in range(N):
-        if abs(L[5][k] - rho) <= dr/2 and abs(L[3][k] - theta) <= dtheta/2 and abs(L[4][k] - phi) <= dphi/2:
+        if abs(L[1][k] - rho) <= dr/2 and abs(L[2][k] - theta) <= dtheta/2 and abs(L[3][k] - phi) <= dphi/2:
             C.append(k)
-    return average(L, C, x, y, z)
+    return C
 """
-
-# 2ème approche : on détermine directement les 8 points les plus proches du mât
-
-def Interpolation8(L,xM,yM,zM,xL,yL,zL):
-    # La liste C va contenir les indices des points les plus proches du mât
-    C = [[k,distance(xM-xL,yM-yL,zM-zL,L[5][k],L[3][k],L[4][k])] for k in range(16)] # La valeur 16 est arbitraire (elle doit seulement être supérieure à 8)
-    C = sorted(C, key = lambda J: J[1]) # On range cette liste par distance
-    for k in range(16,len(L[0])):
-        for l in range(16):
-            d = distance(xM, yM, zM, L[5][k], L[3][k], L[4][k])
-            if d < C[l][1]:
-                C.insert(l,[k,d]) # La liste reste rangée par distance
-                C.pop()
-                break
-    C = C[0:8] # On ne prend que les 8 points les plus proches du mât
-    return [average(L,C,xM,yM,zM), [C[p][0] for p in range(8)]]# La vitesse obtenue est une moyenne de la vitesse en chacun des 8 points
