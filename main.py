@@ -23,11 +23,9 @@ path2 = path0 + "WLS200s-15_radial_wind_data_2015-04-13_01-00-00.csv"
 os.chdir(path)  # On modifie le répertoire courant pour le répertoire contenant les fichiers .py
 from Layout import Layout
 from Parseur import ParseurSonique, ParseurLidar
-from Comparaison import Projection, Interpolation8
+from Comparaison import Projection, Interpolation
 from Maillage import Maillage
 from Interpret import *
-# from Comparaison import Regular_steps, Interpolation_regular_steps
-# from Windrose import *
 
 # Champs des vitesses
 
@@ -87,26 +85,22 @@ if rep.upper() == "Y" or rep.upper() == "O":
 # Anémomètre sonique
 
 R = Projection(U,V,W,xM,yM,zM,xL,yL,zL)*(-1/100) # Valeurs des vitesses radiales acquises par l'anémomètre (en m/s)
-R_avg = sum(R)/len(R)   # Moyenne sur les valeurs obtenues
-R_sigma = np.sqrt(sum([(v - R_avg)**2 for v in R])/len(R)) # Ecart type sur les valeurs obtenues
 
 # Lidar
-"""
-if Regular_steps(L):
-    V = Interpolation_regular_steps(L,xM,yM,zM,xL,yL,zL)  # Valeur de la vitesse radiale à proximité du mât telle qu'acquise par le Lidar
-"""
-S, C = Interpolation8(L,xM,yM,zM,xL,yL,zL) # S : RWS (m/s) et DRWS (m/s) et C : ensemble des indices des 8 points les plus proches du mât parmi ceux pour lesquels on dispose d'une mesure Lidar
 
+C = Interpolation(L,xM,yM,zM,xL,yL,zL,4,True) # Ensemble des indices des 4 points proches du mât
+
+# Valeurs à comparer
+
+VL = np.array([-L[4][C[k]] for k in range(len(C))])
+VS = np.array([(R[int(round(L[0][C[k]]-1))] + R[int(round(L[0][C[k]]))] + R[int(round(L[0][C[k]]+1))])/3 for k in range(len(C))]) # Les deux instruments peuvent être désynchronisés donc on prend la moyenne des valeurs mesurées par le Sonic aux temps L[0][C[k]]
 
 # ---------- Affichage des valeurs ----------
 
-print("Moyenne temporelle de la vitesse mesurée par l'anémomètre : " + str(R_avg) + " m/s")
-print("Ecart type sur les mesures correspondantes : " + str(R_sigma) + " m/s")
-print("Vitesse mesurée au niveau du mât par le Lidar moyennée à partir de valeurs prises à proximité du mât : " + str(S[0]) + " m/s")
-print("Ecart type sur les mesures correspondantes : " + str(S[1]) + " m/s")
-plt.plot(np.arange(0,len(R)),R)
-plt.xlabel("t (u.a.)")
-plt.ylabel("RWS (m/s)")
+plt.plot(np.arange(0,len(R))/10,R)
+plt.xlabel("t (s)")
+plt.ylabel("RWS (m/s)") # Distribution de Weibull
 plt.title("Evolution de la vitesse radiale mesurée par l'anémomètre")
 plt.show()
-Histo(R, R_avg, S, 50)
+Histo(R, R_avg, VL, 50)
+
