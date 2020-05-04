@@ -11,10 +11,10 @@ def Depth(L):
     n = 20 # Nombre de tirages aléatoires du point de départ
     for k in range(n):
         c = np.random.randint(0,len(L[0]))  # Le point de départ est choisi aléatoirement
-        while L[5][c-1] < L[5][c]:          # On se place au début d'une série de mesures à theta et phi fixés
+        while L[1][c-1] < L[1][c]:          # On se place au début d'une série de mesures à theta et phi fixés
             c -= 1
         d = 0
-        while L[5][c+1] > L[5][c]:          # On compte le nombre de valeurs que prend rho pour cette série
+        while L[1][c+1] > L[1][c]:          # On compte le nombre de valeurs que prend rho pour cette série
             c += 1
             d += 1
         D.append(d)
@@ -23,7 +23,7 @@ def Depth(L):
 
 # Visualisation d'un histogramme des valeurs de vitesses radiales mesurées par l'anémomètre
 
-def Histo(R, R_avg, S, n): # n : nombre de barres
+def Histo(R, R_avg, VL, n): # n : nombre de barres
 
     plt.figure("Histogramme")
     H = np.zeros(n)
@@ -48,9 +48,10 @@ def Histo(R, R_avg, S, n): # n : nombre de barres
     M[int(2*n*(R_avg - rmin)/(rmax - rmin))] = max(H)
     plt.bar(np.linspace(rmin,rmax,2*n), M, color = 'r', width = 2/n)
 
-    # Ajout d'une barre verte pour le Lidar
+    # Ajout de barres vertes pour le Lidar
     L = np.zeros(2*n)
-    L[int(2*n*(S[0] - rmin)/(rmax - rmin))] = max(H)
+    for v in VL:
+        L[int(2*n*(v - rmin)/(rmax - rmin))] = max(H)
     plt.bar(np.linspace(rmin,rmax,2*n), L, color = 'g', width = 2/n)
 
     plt.xlabel("Répartition des valeurs de vitesse radiale mesurées par l'anémomètre Sonic")
