@@ -1,7 +1,6 @@
 # Comparaison des valeurs de vent obtenues
 
 import numpy as np
-import time
 
 
 # Calcul des coordonnées sphériques (rad) d'un point désigné par ses coordonnées cartésiennes
