@@ -51,11 +51,11 @@ def Histo(R, R_avg, VL, n): # n : nombre de barres
     # Ajout de barres vertes pour le Lidar
     L = np.zeros(2*n)
     for v in VL:
-        L[int(2*n*(v - rmin)/(rmax - rmin))] += max(H)/len(VL)
+        L[int(2*n*(v - rmin)/(rmax - rmin))] += 2*max(H)/len(VL)
     plt.bar(np.linspace(rmin,rmax,2*n), L, color = 'g', width = 2/n)
 
     plt.xlabel("Répartition des valeurs de vitesse radiale mesurées par l'anémomètre Sonic")
-    k = 2 # Nombre de décimales affichées en abscisses
-    plt.xticks(np.linspace(rmin,rmax,int(n/2)), [str(int(10**k*el)/10**k) for el in np.linspace(rmin,rmax,int(n/2))])
+    k = 1 # Nombre de décimales affichées en abscisses
+    plt.xticks(np.linspace(rmin,rmax,int(n/2)), [str(round(10**k*el)/10**k) for el in np.linspace(rmin,rmax,int(n/2))])
     plt.show()
 
