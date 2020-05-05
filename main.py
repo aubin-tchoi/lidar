@@ -23,7 +23,7 @@ path2 = path0 + "WLS200s-15_radial_wind_data_2015-04-13_01-00-00.csv"
 os.chdir(path)  # On modifie le répertoire courant pour le répertoire contenant les fichiers .py
 from Layout import Layout
 from Parseur import ParseurSonique, ParseurLidar
-from Comparaison import Projection, Interpolation
+from Comparaison import Projection, Interpolation, Interpolationh, Average
 from Maillage import Maillage
 from Interpret import *
 
@@ -84,17 +84,20 @@ if rep.upper() == "Y" or rep.upper() == "O":
 
 # Anémomètre sonique
 
-R = Projection(U,V,W,xM,yM,zM,xL,yL,zL)*(-1/100) # Valeurs des vitesses radiales acquises par l'anémomètre (en m/s)
+R = Projection(U,V,W,xM,yM,zM,xL,yL,zL)*(1/100) # Valeurs des vitesses radiales acquises par l'anémomètre (en m/s)
 R_avg = sum(R)/len(R)
 
 # Lidar
 
-C = Interpolation(L,xM,yM,zM,xL,yL,zL,4,True) # Ensemble des indices des 4 points proches du mât
+# C = Interpolation(L,xM,yM,zM,xL,yL,zL,16,True) # Ensemble des indices des 16 points les plus proches du mât
+C = Interpolationh(L,xM,yM,zM,xL,yL,zL,True) # Ensemble des indices des points vérifiant une certaine condition sur rho, theta et phi
 
 # Valeurs à comparer
 
-VL = np.array([-L[4][C[k]] for k in range(len(C))])
-VS = np.array([(R[int(round(L[0][C[k]]-1))] + R[int(round(L[0][C[k]]))] + R[int(round(L[0][C[k]]+1))])/3 for k in range(len(C))]) # Les deux instruments peuvent être désynchronisés donc on prend la moyenne des valeurs mesurées par le Sonic aux temps L[0][C[k]]
+VL  = np.array([Average(L,C[k],xM,yM,zM)[0] for k in range(len(C))])
+DVL = np.array([Average(L,C[k],xM,yM,zM)[1] for k in range(len(C))])
+VS  = np.array([sum([(R[int(L[0][C[i][j]-1])] + R[int(L[0][C[i][j]])] + R[int(L[0][C[i][j]+1])])/3 for j in range(len(C[i]))])/len(C[i]) for i in range(len(C))]) # On moyenne sur 3 valeurs proches dans le temps puisque les horloges des deux appareils de mesure peuvent être désynchronisées
+
 
 # ---------- Affichage des valeurs ----------
 
@@ -103,5 +106,4 @@ plt.xlabel("t (s)")
 plt.ylabel("RWS (m/s)") # Distribution de Weibull
 plt.title("Evolution de la vitesse radiale mesurée par l'anémomètre")
 plt.show()
-Histo(R, R_avg, VL, 50)
-
+Histo(R, R_avg, VL, 70)
