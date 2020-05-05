@@ -9,7 +9,7 @@ from shutil import copyfile
 
 def convertime(str):
     HouMouS = str.replace(":", " ").split() # Hour, Min, Sec
-    return (float(HouMouS[0])*3600 + float(HouMouS[1])*60 + float(HouMouS[2]))*10
+    return round((float(HouMouS[0])*3600 + float(HouMouS[1])*60 + float(HouMouS[2]))*10)
 
 
 # Prend en entrée un fichier contenant des données Sonic et renvoit les array U, V, W (coordonnées du vent)
@@ -54,14 +54,15 @@ def ParseurLidar(path):
         line = file.readline()
         polar = line.replace(';',' ').replace(',',' ').split()
         if convertime(polar[1]) < 72000: # time0 correspondra à l'indice de la ligne correspondante dans les mesures Sonic (indice*10 = nbr de s écoulées depuis minuit)
-            time0.append(convertime(polar[1]))
+            time0.append(int(convertime(polar[1])))
             rho0.append(float(polar[7]))
             theta0.append(float(polar[5]) + 180.)
-            phi0.append(float(polar[6]))
+            phi0.append(round(100*float(polar[6]))/100)
             rws0.append(float(polar[8]))
             drws0.append(float(polar[9]))
 
     L = [np.array(time0), np.array(rho0), np.array(theta0), np.array(phi0), np.array(rws0), np.array(drws0)]
+
     file.close()
 
     return np.array(L)
