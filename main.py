@@ -14,7 +14,7 @@ et dans lequel theta correspond à l'azimuth (theta = 0 pointe vers le Nord) et 
 
 # ---------- Initialisation ----------
 
-path  = "/Users/Tchoi/OneDrive/1A/Lidar/"   # A modifier
+path  = "/Users/aubin/OneDrive/1A/Lidar/"   # A modifier
 path0 = path  + "Work/"
 path1 = path0 + "1510301.I55"
 path2 = path0 + "WLS200s-15_radial_wind_data_2015-04-13_01-00-00.csv"
