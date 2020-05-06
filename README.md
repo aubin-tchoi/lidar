@@ -2,38 +2,21 @@
 
 
 Dans l'exécution du main il suffit de changer l'adresse "path" pour y mettre le dossier dans lequel se trouve l'ensemble des scripts.
-On suppose que dans ce même dossier se trouve le dossier "Work" en ligne sur Educnet et contenant les données.
+On suppose que dans ce même dossier se trouve le dossier "Work".
 
 ## Convention adoptées
 
 Chaque fichier commence par un intitulé apportant des précisions sur son contenu.
 
-Tous les angles sont exprimés en degrés (°).
 Dans le système de repère choisi, theta correspond à l'azimuth et phi à l'élévation (ce n'est pas le repère sphérique classique, les formules en tiennent compte).
 
 Les fonctions utilisées uniquement au sein d'un même fichier ne prennent pas de majuscule à leur nom, celle qui sont utilisées dans le main en prennent une.
 
 ### Ce que le main fait exactement
 
-- Je l'ai fait crash si on lui donne le mauvais chemin.
-- Il extrait les données des différents fichiers pour les enregistrer dans les array U, V, W et L.
-- Il représente la disposition du parc éolien si demandé, de même pour la représentation du champ des points visités par le Lidar (et enregistre la figure sous forme d'image dans un dossier ./Images le cas échéant).
-
-- Il stocke dans R les valeurs des vitesses radiales enregistrées par l'anémomètre en m/s.
-- R_avg et R_sigma correspondent à la moyenne et l'écart type des valeurs enregistrées.
-- S correspond à la vitesse enregistrée par le Lidar à l'emplacement du mât.
-
-#### N.B.
-
-Si vous êtes très fort, tout en regardant les points se tracer sur la figure "Maillage" vous arriverez à la mettre en grand écran afin d'enregistrer une image plus grande.
-
-L'exécution de la deuxième partie du code (après le tracé des figures) est assez longue.
-
-## Perspectives d'amélioration
-
-- [ ] Améliorer la fonction "moyenne" en pondérant les valeurs
-- [x] Obtenir un ordre de grandeur du temps écoulé entre deux mesures successives du Lidar afin de le comparer au pas de temps Sonique
-- [x] Extraire les indices des 8 points servant à calculer la moyenne afin d'avoir une idée du temps écoulé entre ces mesures
+- Je l'ai fait crash si on lui donne le mauvais chemin,
+- Il représente la disposition du parc éolien si demandé, de même pour la représentation du champ des points visités par le Lidar (et enregistre la figure sous forme d'image dans un dossier ./Images si demandé),
+- Il enregistre dans un fichier .xlsx les données traités.
 
 # Schéma explicatif
 
