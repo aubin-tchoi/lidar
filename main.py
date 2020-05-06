@@ -5,6 +5,7 @@ import os
 import builtins
 import matplotlib.pyplot as plt
 import numpy as np
+import xlsxwriter
 
 """
 On se place dans le repère sphérique (r, theta, phi) ayant pour origine l'emplacement du Lidar
@@ -13,7 +14,7 @@ et dans lequel theta correspond à l'azimuth (theta = 0 pointe vers le Nord) et 
 
 # ---------- Initialisation ----------
 
-path  = "/Users/aubin/OneDrive/1A/Lidar/"   # A modifier
+path  = "/Users/Tchoi/OneDrive/1A/Lidar/"   # A modifier
 path0 = path  + "Work/"
 path1 = path0 + "1510301.I55"
 path2 = path0 + "WLS200s-15_radial_wind_data_2015-04-13_01-00-00.csv"
@@ -101,9 +102,43 @@ VS  = np.array([sum([(R[int(L[0][C[i][j]-1])] + R[int(L[0][C[i][j]])] + R[int(L[
 
 # ---------- Affichage des valeurs ----------
 
+plt.figure("RWS_Sonic",figsize = (14,14))
 plt.plot(np.arange(0,len(R))/10,R)
 plt.xlabel("t (s)")
 plt.ylabel("RWS (m/s)") # Distribution de Weibull
 plt.title("Evolution de la vitesse radiale mesurée par l'anémomètre")
 plt.show()
+if not os.path.exists(path + "Temp/"):
+    os.makedirs(path + "Temp/")
+plt.savefig(path + "Temp/" + "RWS_Sonic.jpg", dpi = 100)
 Histo(R, R_avg, VL, 70)
+plt.savefig(path + "Temp/" + "Histo.jpg", dpi = 100)
+
+workbook = xlsxwriter.Workbook('Lidar.xlsx')
+worksheet = workbook.add_worksheet()
+
+worksheet.set_column("A:A", 10)
+worksheet.set_column("B:B", 10)
+worksheet.set_column("C:C", 10)
+worksheet.set_column("D:D", 10)
+
+worksheet.write_row(0,0,["Time", "RWS (Lidar)", "DRWS (Lidar)", "RWS (Sonic)", ": m/s"])
+row, col = 1, 0
+for i in range(len(C)):
+    for j in range(len(C[0])):
+        worksheet.write_row(row, col, [str(int((L[0][C[i][j]]/10)//60)) + " min " + str(int(10*(L[0][C[i][j]]/10)%60)/10) + " s", -L[4][C[i][j]], L[5][C[i][j]], (R[int(L[0][C[i][j]-1])] + R[int(L[0][C[i][j]])] + R[int(L[0][C[i][j]+1])])/3])
+        row += 1
+    worksheet.write_row(row, col, ["Average of 4", VL[i], DVL[i], VS[i]])
+    row += 2
+
+worksheet.insert_image("F2", path + "Temp/" + "RWS_Sonic.jpg", {'x_scale': 0.33, 'y_scale': 0.33})
+worksheet.insert_image("F14", path + "Temp/" + "Histo.jpg", {'x_scale': 0.33, 'y_scale': 0.33})
+
+workbook.close()
+
+try:
+    os.remove(path + "Temp/" + "Histo.jpg")
+    os.remove(path + "Temp/" + "RWS_Sonic.jpg")
+    os.rmdir(path + "Temp")
+except FileNotFoundError:
+    os.rmdir(path + "Temp")
