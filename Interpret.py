@@ -25,7 +25,7 @@ def Depth(L):
 
 def Histo(R, R_avg, VL, n): # n : nombre de barres
 
-    plt.figure("Histogramme")
+    plt.figure("Histogramme", figsize = (14,14))
     H = np.zeros(n)
     rmin, rmax = min(R), max(R)
 
