@@ -18,7 +18,7 @@ def Depth(L):
             c += 1
             d += 1
         D.append(d)
-    return sum(D)/len(D)                    # On regarde la moyenne des valeurs obtenues
+    return int(sum(D)/len(D))                    # On regarde la moyenne des valeurs obtenues
 
 
 # Visualisation d'un histogramme des valeurs de vitesses radiales mesurées par l'anémomètre
