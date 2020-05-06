@@ -163,10 +163,10 @@ def Interpolationh(L,xM,yM,zM,xL,yL,zL,count_time):
     tini = time.perf_counter()
     rho, theta, phi = cart_to_pol(xM,yM,zM,xL,yL,zL)
     # dr, dtheta, dphi = Pas(L)
-    dr, dtheta, dphi = 50, 1, 1
+    dr, dtheta = 50, 1
     theta = theta*180/np.pi
     C = []  # Liste des points proches du mât
-    for k in np.where(L[3] == 2.90)[0]:
+    for k in np.where(abs(L[3] - 2.90) < 0.01)[0]:
         if abs(L[1][k] - rho) <= dr/2 and abs(L[2][k] - theta) <= dtheta/2:
             C.append(k)
     if count_time:
@@ -178,12 +178,13 @@ def Interpolationh(L,xM,yM,zM,xL,yL,zL,count_time):
 
 def same_scan(C0):
     rC = 0
-    C = [[C0[0]]]
+    C = []
+    temp = []
     C0.sort()
-    for k in range(1,len(C0)):
-        if C0[k] - C0[k-1] > 200: # On prend les valeurs correspondant à un même scan (elles sont rangées
-            C.append([C0[k]])
+    for k in range(len(C0)-1):
+        temp.append(C0[k])
+        if C0[k + 1] - C0[k] > 200: # On prend les valeurs correspondant à un même scan (elles sont rangées
+            C.append(np.array(temp))
+            temp = []
             rC += 1
-        else:
-            C[rC].append(C0[k])
-    return C
+    return np.array(C)
