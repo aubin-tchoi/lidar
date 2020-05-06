@@ -17,7 +17,7 @@ et dans lequel theta correspond à l'azimuth (theta = 0 pointe vers le Nord) et 
 path  = "/Users/aubin/OneDrive/1A/Lidar/"   # A modifier
 
 # On reprend les fonctions des fichiers annexes pour lire les données
-
+tini = time.perf_counter()
 os.chdir(path)  # On modifie le répertoire courant pour le répertoire contenant les fichiers .py
 from Layout import Layout
 from Parseur import ParseurSonique, ParseurLidar
@@ -31,11 +31,11 @@ n = len(os.listdir())//2 # On compte le nombre de fichiers (de couples de fichie
 
 workbook = xlsxwriter.Workbook(path + 'Lidar8.xlsx')
 worksheet = workbook.add_worksheet()
-for c in range(5*n):
+for c in range(6*n):
     if c%6 == 0:
-        worksheet.set_column(c, c, 13)
+        worksheet.set_column(c, c, 13.66)
     else:
-        worksheet.set_column(c, c, 9.8)
+        worksheet.set_column(c, c, 10.5)
 row, col = 0, 0
 
 zM = 55 # Altitude du mât
@@ -105,3 +105,4 @@ for indice in range(1, n+1): # On parcourt les différents fichiers
         print(str(indice) + "ème fichier traité !")
 
 workbook.close()
+print(time.perf_counter() - tini)
