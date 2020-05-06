@@ -14,7 +14,7 @@ et dans lequel theta correspond à l'azimuth (theta = 0 pointe vers le Nord) et 
 
 # ---------- Initialisation ----------
 
-path  = "/Users/Tchoi/OneDrive/1A/Lidar/"   # A modifier
+path  = "/Users/aubin/OneDrive/1A/Lidar/"   # A modifier
 path0 = path  + "Work/"
 path1 = path0 + "1510301.I55"
 path2 = path0 + "WLS200s-15_radial_wind_data_2015-04-13_01-00-00.csv"
@@ -122,7 +122,7 @@ worksheet.set_column("B:B", 10)
 worksheet.set_column("C:C", 10)
 worksheet.set_column("D:D", 10)
 
-worksheet.write_row(0,0,["Time", "RWS (Lidar)", "DRWS (Lidar)", "RWS (Sonic)", ": m/s"])
+worksheet.write_row(0,0,["Time", "RWS (Lidar)", "DRWS (Lidar)", "RWS (Sonic)", "m/s"])
 row, col = 1, 0
 for i in range(len(C)):
     for j in range(len(C[0])):
