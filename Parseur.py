@@ -53,7 +53,7 @@ def ParseurLidar(path):
     for i in range(n):
         line = file.readline()
         polar = line.replace(';',' ').replace(',',' ').split()
-        if convertime(polar[1]) < 72000: # time0 correspondra à l'indice de la ligne correspondante dans les mesures Sonic (indice*10 = nbr de s écoulées depuis minuit)
+        if convertime(polar[1]) < 432000: # time0 correspondra à l'indice de la ligne correspondante dans les mesures Sonic (indice*10 = nbr de s écoulées depuis minuit)
             time0.append(int(convertime(polar[1])))
             rho0.append(float(polar[7]))
             theta0.append(float(polar[5]) + 180.)
