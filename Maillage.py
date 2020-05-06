@@ -10,7 +10,7 @@ import matplotlib.pyplot as plt
 # xM, yM, zM : coordonnées du mât
 
 def Maillage(L,n,s,pause,xL,yL,zL,xM,yM,zM):
-    _, (ax1, ax2) = plt.subplots(1, 2, sharex = True, num = "Maillage") # Les deux graphes partageront la même abscisse x
+    _, (ax1, ax2) = plt.subplots(1, 2, sharex = True, num = "Maillage", figsize = (14,14)) # Les deux graphes partageront la même abscisse x
     ax1.set_title("y, x") # Le graphe de gauche représentera y en ordonnées
     ax2.set_title("z, x") # Le graphe de droite représentera z en ordonnées
     ax1.set_xlabel("x")
