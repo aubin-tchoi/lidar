@@ -6,6 +6,7 @@ import builtins
 import matplotlib.pyplot as plt
 import numpy as np
 import xlsxwriter
+import time
 
 """
 On se place dans le repère sphérique (r, theta, phi) ayant pour origine l'emplacement du Lidar
@@ -105,4 +106,4 @@ for indice in range(1, n+1): # On parcourt les différents fichiers
         print(str(indice) + "ème fichier traité !")
 
 workbook.close()
-print(time.perf_counter() - tini)
+print("Total execution time : " + str(time.perf_counter() - tini) + " s")
