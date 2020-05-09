@@ -12,6 +12,7 @@ def cart_to_pol(x,y,z,xL,yL,zL):
     phi   = np.arcsin((z-zL)/rho)
     return rho, theta, phi
 
+
 # Renvoit un vecteur contenant la composante radiale du vent mesuré par l'anémomètre
 
 def Projection(U,V,W,xM,yM,zM,xL,yL,zL):
@@ -22,23 +23,25 @@ def Projection(U,V,W,xM,yM,zM,xL,yL,zL):
         R0.append(U[k]*np.sin(theta)*np.cos(phi) + V[k]*np.cos(theta)*np.cos(phi) + W[k]*np.sin(phi))
     return np.array(R0)
 
+
 # Calcul de la distance euclidienne entre deux points (theta et phi à exprimer en °)
 
-def distance(xM,yM,zM,rho,theta,phi):
+def Distance(xM,yM,zM,rho,theta,phi):
     theta = theta*np.pi/180
     phi = phi*np.pi/180
     return np.sqrt((rho*np.sin(theta)*np.cos(phi) - xM)**2 + (rho*np.cos(theta)*np.cos(phi) - yM)**2 + (rho*np.sin(phi) - zM)**2)
+
 
 # Renvoit la liste des indices des points les plus proches du mât
 
 def Interpolation(L,xM,yM,zM,xL,yL,zL,n,count_time):
     tini = time.perf_counter()
     # La liste C va contenir les indices des points les plus proches du mât
-    C = [[k,distance(xM-xL,yM-yL,zM-zL,L[1][k],L[2][k],L[3][k])] for k in range(n)]
+    C = [[k,Distance(xM-xL,yM-yL,zM-zL,L[1][k],L[2][k],L[3][k])] for k in range(n)]
     C = sorted(C, key = lambda J: J[1]) # On range cette liste par distance
     for k in range(n,len(L[0])):
         for l in range(len(C)):
-            d = distance(xM-xL, yM-xL, zM-zL, L[1][k], L[2][k], L[3][k])
+            d = Distance(xM-xL, yM-xL, zM-zL, L[1][k], L[2][k], L[3][k])
             if d < C[l][1]:
                 C.insert(l,[k,d]) # La liste reste rangée par distance
                 C.pop()
@@ -49,7 +52,7 @@ def Interpolation(L,xM,yM,zM,xL,yL,zL,n,count_time):
 
 
 def Average(L,C,xM,yM,zM):    # C contient ici à l'ensemble des indices des points à moyenner
-    d = [distance(xM,yM,zM,L[1][C[k]],L[2][C[k]],L[3][C[k]]) for k in range(len(C))] # Distance euclidienne
+    d = [Distance(xM,yM,zM,L[1][C[k]],L[2][C[k]],L[3][C[k]]) for k in range(len(C))] # Distance euclidienne
     dtot = sum(d)
     V = 0
     D = 0
@@ -81,14 +84,7 @@ def step_quicksort(L, count_time):  # Cette version utilise un quicksort
             first_part.append(x[i])
             return first_part + second_part
 
-    r0, theta0, phi0 = [], [], []   # Contiendront les différentes valeurs de r, theta et phi (sans doublon)
-    for k in range(len(L[0])):
-        if L[1][k] not in r0:
-            r0.append(L[1][k])
-        if L[2][k] not in theta0:
-            theta0.append(L[2][k])
-        if L[3][k] not in phi0:
-            phi0.append(L[3][k])
+    r0, theta0, phi0 = np.unique(L[1]), np.unique(L[2]), np.unique(L[3])   # Contiennent les différentes valeurs de r, theta et phi (sans doublon)
 
     r, theta, phi = quicksort(r0), quicksort(theta0), quicksort(phi0)
 
@@ -104,18 +100,12 @@ def step_quicksort(L, count_time):  # Cette version utilise un quicksort
 
     return [dr, round(1000*dtheta)/1000, dphi]
 
+
 def step(L, count_time): # Cette version n'utilise pas de quicksort
 
     tini = time.perf_counter()
 
-    r0, theta0, phi0 = [], [], []   # Contiendront les différentes valeurs de r, theta et phi (sans doublon)
-    for k in range(len(L[0])):
-        if L[1][k] not in r0:
-            r0.append(L[1][k])
-        if L[2][k] not in theta0:
-            theta0.append(L[2][k])
-        if L[3][k] not in phi0:
-            phi0.append(L[3][k])
+    r0, theta0, phi0 = np.unique(L[1]), np.unique(L[2]), np.unique(L[3])   # Contiennent les différentes valeurs de r, theta et phi (sans doublon)
 
     dr     = (max(r0) - min(r0))/(len(r0)-1)    # len(r0)-1 puisque l'on compte le nombre d'intervalles
     dtheta = (max(theta0) - min(theta0))/(len(theta0)-1)
@@ -125,6 +115,7 @@ def step(L, count_time): # Cette version n'utilise pas de quicksort
         print("Temps d'exécution de la fonction step : " + str(time.perf_counter() - tini) + " s")
 
     return [dr, dtheta, dphi]
+
 
 # Vérifie que r, theta et phi évoluent par pas réguliers
 
@@ -163,7 +154,7 @@ def Interpolationh(L,xM,yM,zM,xL,yL,zL,count_time):
     tini = time.perf_counter()
     rho, theta, phi = cart_to_pol(xM,yM,zM,xL,yL,zL)
     # dr, dtheta, dphi = Pas(L)
-    dr, dtheta = 50, 1
+    dr, dtheta = 50, 2
     theta = theta*180/np.pi
     C = []  # Liste des points proches du mât
     for k in np.where(abs(L[3] - 2.90) < 0.01)[0]:
@@ -183,7 +174,7 @@ def same_scan(C0):
     C0.sort()
     for k in range(len(C0)-1):
         temp.append(C0[k])
-        if C0[k + 1] - C0[k] > 200: # On prend les valeurs correspondant à un même scan (elles sont rangées
+        if (k+1)%4 == 0: # On prend les valeurs correspondant à un même scan
             C.append(np.array(temp))
             temp = []
             rC += 1
