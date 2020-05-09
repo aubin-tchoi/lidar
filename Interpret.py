@@ -21,6 +21,13 @@ def Depth(L):
     return int(sum(D)/len(D))                    # On regarde la moyenne des valeurs obtenues
 
 
+# Nombre d'occurences d'un pas de temps entre 2 mesures et pas de temps associé (en dixièmes de s)
+
+def MeasuringTime(L):
+    TL = [L[0][k+1] - L[0][k] for k in range(int(len(L[0])-1))]
+    return [[len(TL) - np.count_nonzero(TL - np.linspace(val,val,len(TL))),val] for val in np.unique(TL)]
+
+
 # Visualisation d'un histogramme des valeurs de vitesses radiales mesurées par l'anémomètre
 
 def Histo(R, R_avg, VL, n): # n : nombre de barres
@@ -49,13 +56,14 @@ def Histo(R, R_avg, VL, n): # n : nombre de barres
     plt.bar(np.linspace(rmin,rmax,2*n), M, color = 'r', width = 2/n)
 
     # Ajout de barres vertes pour le Lidar
-    L = np.zeros(2*n)
-    for v in VL:
-        L[int(2*n*(v - rmin)/(rmax - rmin))] += 2*max(H)/len(VL)
-    plt.bar(np.linspace(rmin,rmax,2*n), L, color = 'g', width = 2/n)
-
+    try:
+        li = np.zeros(2*n)
+        for v in VL:
+            if v < rmax:
+                li[int(2*n*(v - rmin)/(rmax - rmin))] += 2*max(H)/len(VL)
+        plt.bar(np.linspace(rmin,rmax,2*n), li, color = 'g', width = 2/n)
+    except IndexError:
+        print("Some of the RWS values measured by the Lidar are out of the interval [min(R),max(R)]")
     plt.xlabel("Répartition des valeurs de vitesse radiale mesurées par l'anémomètre Sonic")
     k = 1 # Nombre de décimales affichées en abscisses
     plt.xticks(np.linspace(rmin,rmax,int(n/2)), [str(round(10**k*el)/10**k) for el in np.linspace(rmin,rmax,int(n/2))])
-    plt.show()
-
