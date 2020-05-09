@@ -107,3 +107,4 @@ for indice in range(1, n+1): # On parcourt les différents fichiers
 
 workbook.close()
 print("Total execution time : " + str(time.perf_counter() - tini) + " s")
+
