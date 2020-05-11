@@ -102,14 +102,22 @@ VS  = np.array([sum([(R[int(L[0][C[i][j]-1])] + R[int(L[0][C[i][j]])] + R[int(L[
 
 # ---------- Affichage des valeurs ----------
 
-plt.figure("RWS_Sonic",figsize = (14,14))
-plt.plot(np.arange(0,len(R))/10,R)
-plt.xlabel("t (s)")
-plt.ylabel("RWS (m/s)") # Distribution de Weibull
-plt.title("Evolution de la vitesse radiale mesurée par l'anémomètre")
+fig, axes = plt.subplots(1, 1, num = "RWS_Sonic",figsize = (14,14))
+axes.plot(np.arange(0,len(R))/10,R)
+axes.set_xlabel("t (s)")
+axes.set_ylabel("RWS (m/s)") # Distribution de Weibull
+tmptime=[]
+tmplidar=[]
+for i in range(len(C)):
+    for j in range(len(C[0])):
+        tmptime.append(L[0][C[i][j]]/10)
+        tmplidar.append(-L[4][C[i][j]])
+axes.scatter(tmptime, tmplidar, s = 14, c = 'r',zorder = 3)
+axes.set_title("Evolution de la vitesse radiale mesurée par l'anémomètre")
 if not os.path.exists(path + "Temp/"):
     os.makedirs(path + "Temp/")
-plt.savefig(path + "Temp/" + "RWS_Sonic.png", dpi = 100)
+fig.savefig(path + "Temp/" + "RWS_Sonic.png", dpi = 100)
+
 Histo(R, R_avg, VL, 70)
 plt.savefig(path + "Temp/" + "Histo.png", dpi = 100)
 
@@ -118,17 +126,17 @@ worksheet = workbook.add_worksheet()
 
 worksheet.set_column(0, 4, 15.11)
 
-worksheet.write_row(0,0,["Time", "RWS (Lidar) (m/s)", "DRWS (Lidar) (m/s)", "RWS (Sonic) (m/s)", "Distance (m)"])
+worksheet.write_row(0,0,["Time", "RWS (Lidar) (m/s)", "DRWS (Lidar) (m/s)", "RWS (Sonic) (m/s)", "Distance (m)", "rho (m)", "theta (°)"])
 row, col = 1, 0
 for i in range(len(C)):
     for j in range(len(C[0])):
-        worksheet.write_row(row, col, [str(int((L[0][C[i][j]]/10)//60)) + " min " + str(int(10*(L[0][C[i][j]]/10)%60)/10) + " s", -L[4][C[i][j]], L[5][C[i][j]], (R[int(L[0][C[i][j]-1])] + R[int(L[0][C[i][j]])] + R[int(L[0][C[i][j]+1])])/3, Distance(xM-xL,yM-yL,zM-zL,L[1][C[i][j]],L[2][C[i][j]],L[3][C[i][j]])])
+        worksheet.write_row(row, col, [str(int((L[0][C[i][j]]/10)//60)) + " min " + str(int(10*(L[0][C[i][j]]/10)%60)/10) + " s", -L[4][C[i][j]], L[5][C[i][j]], (R[int(L[0][C[i][j]-1])] + R[int(L[0][C[i][j]])] + R[int(L[0][C[i][j]+1])])/3, Distance(xM-xL,yM-yL,zM-zL,L[1][C[i][j]],L[2][C[i][j]],L[3][C[i][j]]), L[1][[C[i][j]]], L[2][C[i][j]]])
         row += 1
     worksheet.write_row(row, col, ["Average of 4", VL[i], DVL[i], VS[i]])
     row += 2
 
-worksheet.insert_image("G2", path + "Temp/" + "RWS_Sonic.png", {'x_scale': 0.33, 'y_scale': 0.33})
-worksheet.insert_image("G26", path + "Temp/" + "Histo.png", {'x_scale': 0.33, 'y_scale': 0.33})
+worksheet.insert_image("I2", path + "Temp/" + "RWS_Sonic.png", {'x_scale': 0.33, 'y_scale': 0.33})
+worksheet.insert_image("I26", path + "Temp/" + "Histo.png", {'x_scale': 0.33, 'y_scale': 0.33})
 
 workbook.close()
 
