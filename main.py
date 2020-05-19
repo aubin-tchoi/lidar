@@ -141,6 +141,8 @@ def decimals(A, n):
         return np.array(B)
     elif isinstance(A, (int, float, np.intc, np.single, np.int32, np.int64, np.float32, np.float64)):
         return round(A*10**n)/10**n
+    else:
+        return A
 
 workbook = xlsxwriter.Workbook('Lidar.xlsx')
 worksheet = workbook.add_worksheet()
