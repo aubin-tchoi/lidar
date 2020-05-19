@@ -86,6 +86,7 @@ if rep.upper() == "Y" or rep.upper() == "O":
 # Anémomètre sonique
 
 R = Projection(U,V,W,xM,yM,zM,xL,yL,zL)*(1/100) # Valeurs des vitesses radiales acquises par l'anémomètre (en m/s)
+R_avg = np.average(R)
 
 # Lidar
 
