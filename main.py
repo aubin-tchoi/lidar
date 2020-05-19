@@ -51,7 +51,7 @@ if rep.upper() == "Y"
     plot_theta(U,V,121)
     windrose0(U,V,122)
 """
-# Position du mât et du Lidar
+# Disposition du parc éolien
 
 rep = builtins.input("Do you wish to display the layout of the windfarm (Y/N) ? ")
 
@@ -60,6 +60,8 @@ if rep.upper() == "Y" or rep.upper() == "O": # O pour ceux qui voudraient dire o
 else:
     xM,yM,xL,yL = Layout(path + "Work/",False)
     plt.close("Layout")
+
+# Maillage
 
 rep = builtins.input("Do you wish to display the grid of the points measured by the Lidar (Y/N) ? ")
 
@@ -95,11 +97,12 @@ D = [[Distance(xM-xL,yM-yL,zM-zL,L[1][C[i][j]],L[2][C[i][j]],L[3][C[i][j]]) for 
 
 # Valeurs à comparer
 
-VL  = np.array([np.average([-L[4][C[i][j]] for j in range(len(C[i]))], weights = D[i]) for i in range(len(C))])
-DVL = np.array([Average(L,C[k],xM,yM,zM)[1] for k in range(len(C))])
-Cluster = np.array([np.array([R[int(L[0][k])] for k in range(np.amin(C[i]) - 50, np.amax(C[i]) + 50)]) for i in range(len(C))])
-VS  = np.array([np.average(Cluster[i]) for i in range(len(C))])
-DVS = np.array([np.sqrt(np.sum([(Cluster[i][j] - VS[i])**2 for j in range(len(Cluster[i]))])/len(Cluster[i])) for i in range(len(VS))])
+VL  = np.array([np.average([-L[4][C[i][j]] for j in range(len(C[i]))], weights = D[i]) for i in range(len(C))])                         # Vitesse Lidar
+DVL = np.array([Average(L,C[k],xM,yM,zM)[1] for k in range(len(C))])                                                                    # Ecart type sur les mesures Lidar
+Cluster = np.array([np.array([R[int(L[0][k])] for k in range(np.amin(C[i]) - 50, np.amax(C[i]) + 50)]) for i in range(len(C))])         # Cluster de valeurs de la vitesse Sonique prises à des temps proches de ceux auxquels le Lidar prend une mesure proche du mât
+VS  = np.array([np.average(Cluster[i]) for i in range(len(C))])                                                                         # Vitesse Sonique (moyenne par cluster)
+DVS = np.array([np.sqrt(np.sum([(Cluster[i][j] - VS[i])**2 for j in range(len(Cluster[i]))])/len(Cluster[i])) for i in range(len(VS))]) # Ecart type sur chaque cluster
+
 
 # ---------- Affichage des valeurs ----------
 
@@ -128,6 +131,7 @@ fig.savefig(path + "Temp/" + "RWS_Sonic.png", dpi = 100) # Vitesse radiale
 
 Histo(R, R_avg, VL, 70)
 plt.savefig(path + "Temp/" + "Histo.png", dpi = 100) # Histogramme des valeurs
+
 
 # ---------- Ecriture d'un fichier Excel ----------
 
