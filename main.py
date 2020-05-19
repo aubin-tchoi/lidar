@@ -101,11 +101,14 @@ VS  = np.array([np.average(Cluster[i]) for i in range(len(C))])
 DVS = np.array([np.sqrt(np.sum([(Cluster[i][j] - VS[i])**2 for j in range(len(Cluster[i]))])/len(Cluster[i])) for i in range(len(VS))])
 
 # ---------- Affichage des valeurs ----------
-##
+
 fig, axes = plt.subplots(1, 1, num = "RWS_Sonic",figsize = (14,14))
 axes.plot(np.arange(0,len(R))/10,R)
 axes.set_xlabel("t (s)")
-axes.set_ylabel("RWS (m/s)") # Distribution de Weibull
+axes.set_ylabel("RWS (m/s)")
+
+# On ajoute en rouge les points correspondant aux valeurs mesurées par le Lidar
+
 tmptime = []
 tmplidar = []
 for i in range(len(C)):
@@ -113,42 +116,54 @@ for i in range(len(C)):
         tmptime.append(L[0][C[i][j]]/10)
         tmplidar.append(-L[4][C[i][j]])
 axes.scatter(tmptime, tmplidar, s = 14, c = 'r',zorder = 3)
+
 axes.set_title("Evolution de la vitesse radiale mesurée par l'anémomètre")
+
+# On enregistre temporairement les images afin de les intégrer au fichier Excel crée par la suite
+
 if not os.path.exists(path + "Temp/"):
     os.makedirs(path + "Temp/")
-fig.savefig(path + "Temp/" + "RWS_Sonic.png", dpi = 100)
+fig.savefig(path + "Temp/" + "RWS_Sonic.png", dpi = 100) # Vitesse radiale
 
 Histo(R, R_avg, VL, 70)
-plt.savefig(path + "Temp/" + "Histo.png", dpi = 100)
+plt.savefig(path + "Temp/" + "Histo.png", dpi = 100) # Histogramme des valeurs
 
 # ---------- Ecriture d'un fichier Excel ----------
 
-def decimals(A,n):
+# Fonction qui prend en entrée un tableau et qui modifie ses valeurs pour en garder les n premières décimales
+
+def decimals(A, n):
     if isinstance(A, (np.ndarray, list)):
-        for el in A:
-            el = decimals(el, n)
+        B = []
+        for k in range(len(A)):
+            B.append(decimals(A[k], n))
+        return np.array(B)
     elif isinstance(A, (int, float, np.intc, np.single, np.int32, np.int64, np.float32, np.float64)):
-        A = round(10**n*A)/10**n
-    return A
+        return round(A*10**n)/10**n
 
 workbook = xlsxwriter.Workbook('Lidar.xlsx')
 worksheet = workbook.add_worksheet()
 
-worksheet.set_column(0, 7, 15.11)
+worksheet.set_column(0, 7, 10) # On agrandit la largeur des colonnes
 
-worksheet.write_row(0,0,["Time", "RWS (Lidar) (m/s)", "DRWS (Lidar) (m/s)","RWS (Sonic)", "DRWS (Sonic)", "Distance (m)", "rho (m)", "theta (°)"])
+worksheet.write_row(0,0,["Time", "RWS (Lidar)", "DRWS (Lidar)","RWS (Sonic)", "DRWS (Sonic)", "Distance (m)", "rho (m)", "theta (°)", "All speeds in m/s"]) # Première ligne
+
 row, col = 1, 0
 for i in range(len(C)):
     for j in range(len(C[0])):
         worksheet.write_row(row, col, decimals([str(int((L[0][C[i][j]]/10)//60)) + " min " + str(int(10*(L[0][C[i][j]]/10)%60)/10) + " s", -L[4][C[i][j]], L[5][C[i][j]], "", "", Distance(xM-xL,yM-yL,zM-zL,L[1][C[i][j]],L[2][C[i][j]],L[3][C[i][j]]), L[1][[C[i][j]]], L[2][C[i][j]]], 4))
         row += 1
-    worksheet.write_row(row, col, decimals(["Average of 4", VL[i], DVL[i], VS[i], DVS[i]],4))
+    worksheet.write_row(row, col, decimals(["Average of 4", VL[i], DVL[i], VS[i], DVS[i]], 4))
     row += 2
+
+# Insertion des images enregistrées précédemment
 
 worksheet.insert_image("J2", path + "Temp/" + "RWS_Sonic.png", {'x_scale': 0.33, 'y_scale': 0.33})
 worksheet.insert_image("J26", path + "Temp/" + "Histo.png", {'x_scale': 0.33, 'y_scale': 0.33})
 
 workbook.close()
+
+# On supprime les images enregistrées
 
 try:
     os.remove(path + "Temp/" + "Histo.png")
