@@ -142,7 +142,7 @@ for i in range(len(C)):
     for j in range(len(C[0])):
         worksheet.write_row(row, col, decimals([str(int((L[0][C[i][j]]/10)//60)) + " min " + str(int(10*(L[0][C[i][j]]/10)%60)/10) + " s", -L[4][C[i][j]], L[5][C[i][j]], "", "", Distance(xM-xL,yM-yL,zM-zL,L[1][C[i][j]],L[2][C[i][j]],L[3][C[i][j]]), L[1][[C[i][j]]], L[2][C[i][j]]], 4))
         row += 1
-    worksheet.write_row(row, col, ["Average of 4", VL[i], DVL[i], VS[i], DVS[i]])
+    worksheet.write_row(row, col, decimals(["Average of 4", VL[i], DVL[i], VS[i], DVS[i]],4))
     row += 2
 
 worksheet.insert_image("J2", path + "Temp/" + "RWS_Sonic.png", {'x_scale': 0.33, 'y_scale': 0.33})
