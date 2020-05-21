@@ -32,7 +32,7 @@ from Interpret import *
 
 path0 = path + "Lidar+Sonic/"
 
-os.chdir(path0)
+os.chdir(path0) # On modifie le répertoire courant pour celui contenant les fichiers de données
 n = len(os.listdir())//2 # On compte le nombre de fichiers (de couples de fichiers Lidar/Sonique)
 
     # Fonction qui prend en entrée un tableau et qui modifie ses valeurs pour en garder les n premières décimales
@@ -48,8 +48,11 @@ def decimals(A, p):
     else:
         return A
 
+# Création du fichier Excel
+
 workbook = xlsxwriter.Workbook(path + 'Lidar8.xlsx')
 worksheet = workbook.add_worksheet()
+
 worksheet.set_column(0, 1, 14)
 worksheet.set_column(1, 7, 10.5) # On agrandit la largeur des colonnes
 worksheet.write_row(0,0,["Time", "RWS (Lidar)", "DRWS (Lidar)","RWS (Sonic)", "DRWS (Sonic)", "Distance (m)", "rho (m)", "theta (°)", "All speeds in m/s"]) # Première ligne
@@ -57,6 +60,15 @@ row, col = 1, 0
 
 zM = 55 # Altitude du mât
 zL = 0  # Altitude du Lidar
+
+# Initialisation RWS_Sonic
+
+Rsonic = []
+tmptime = []
+tmplidar = []
+fig, axes = plt.subplots(1, 1, num = "RWS_Sonic",figsize = (14,14))
+axes.set_xlabel("t (s)")
+axes.set_ylabel("RWS (m/s)")
 
 xM,yM,xL,yL = Layout(path + "Work/",False) # Coordonnées du mât et du Lidar
 plt.close("Layout")
@@ -109,6 +121,8 @@ for hour in range(1, n+1): # On parcourt les différents fichiers
 
     # Valeurs des vitesses radiales acquises par l'anémomètre (en m/s)
     R = Projection(U,V,W,xM,yM,zM,xL,yL,zL)*(1/100)
+    for el in R:
+        Rsonic.append(el)
 
     # Moyenne des valeurs mesurées (utilisée dans la fonction Histo)
     R_avg = np.average(R)
@@ -122,6 +136,14 @@ for hour in range(1, n+1): # On parcourt les différents fichiers
     # Ecart type sur chaque cluster
     DVS = np.array([np.sqrt(np.sum([(Cluster[i][j] - VS[i])**2 for j in range(len(Cluster[i]))])/len(Cluster[i])) for i in range(len(VS))])
 
+    # ---------- Affichage des valeurs ----------
+
+    # On ajoute en rouge les points correspondant aux valeurs mesurées par le Lidar
+
+    for i in range(len(C)):
+        for j in range(len(C[0])):
+            tmptime.append(L[0][C[i][j]]/10 + (hour - 1)*3600)
+            tmplidar.append(-L[4][C[i][j]])
 
     # ---------- Ecriture du fichier Excel ----------
 
@@ -132,9 +154,39 @@ for hour in range(1, n+1): # On parcourt les différents fichiers
         worksheet.write_row(row, col, decimals(["Average of 4", VL[i], DVL[i], VS[i], DVS[i]], 4))
         row += 2
 
+# Tracé de la vitesse radiale mesurée par l'anémomètre
+
+axes.plot(np.arange(0,len(Rsonic))/10,Rsonic)
+axes.scatter(tmptime, tmplidar, s = 14, c = 'r',zorder = 3)
+if not os.path.exists(path + "Temp/"):
+    os.makedirs(path + "Temp/")
+fig.savefig(path + "Temp/" + "RWS_Sonic.png", dpi = 100)
+
+# Tracé de l'histogramme
+
+Histo(R, 70)
+plt.savefig(path + "Temp/" + "Histo.png", dpi = 100)
+
+# Insertion des images dans le fichier Excel
+
+worksheet.insert_image("J3", path + "Temp/" + "RWS_Sonic.png", {'x_scale': 0.33, 'y_scale': 0.33})
+worksheet.insert_image("J27", path + "Temp/" + "Histo.png", {'x_scale': 0.33, 'y_scale': 0.33})
+
 try:
     workbook.close()
 except xlsxwriter.exceptions.FileCreateError: # Résoud un problème d'autorisation rencontré sous Windows
         os.remove(path + "Lidar.xlsx") # On supprime le fichier bloqué et on le réécrit
 
+# On supprime les images enregistrées
+
+try:
+    os.remove(path + "Temp/" + "Histo.png")
+    os.remove(path + "Temp/" + "RWS_Sonic.png")
+    os.rmdir(path + "Temp")
+except FileNotFoundError:
+    os.rmdir(path + "Temp")
+
+# Affichage du temps total d'exécution
+
 print("Total execution time : " + str(time.perf_counter() - tini) + " s")
+
