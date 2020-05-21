@@ -50,17 +50,6 @@ def Interpolation(L,xM,yM,zM,xL,yL,zL,n,count_time):
         print("Temps d'exécution de la fonction Interpolation : " + str(time.perf_counter() - tini) + " s")
     return same_scan([C[p][0] for p in range(len(C))])
 
-
-def Average(L,C,xM,yM,zM):    # C contient ici à l'ensemble des indices des points à moyenner
-    d = [Distance(xM,yM,zM,L[1][C[k]],L[2][C[k]],L[3][C[k]]) for k in range(len(C))] # Distance euclidienne
-    dtot = sum(d)
-    V = 0
-    D = 0
-    for k in range(len(C)):
-        V += L[4][C[k]]/len(C)    # Moyenne à pondérer par d (j'ai mis une moyenne arithmétique provisoirement)
-        D += L[5][C[k]]/len(C)
-    return [-V, D]
-
 """
 # Les deux fonctions Pas renvoient un tuple correspondant aux intervalles entre chaque mesure de r, de theta ou de phi (min(abs(a-b)) pour a,b dans liste tels que a != b)
 
@@ -154,7 +143,7 @@ def Interpolationh(L,xM,yM,zM,xL,yL,zL,count_time):
     tini = time.perf_counter()
     rho, theta, phi = cart_to_pol(xM,yM,zM,xL,yL,zL)
     # dr, dtheta, dphi = Pas(L)
-    dr, dtheta = 50, 2
+    dr, dtheta = 50, 1.2
     theta = theta*180/np.pi
     C = []  # Liste des points proches du mât
     for k in np.where(abs(L[3] - 2.90) < 0.01)[0]:
