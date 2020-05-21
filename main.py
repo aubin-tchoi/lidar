@@ -14,7 +14,7 @@ et dans lequel theta correspond à l'azimuth (theta = 0 pointe vers le Nord) et 
 
 # ---------- Initialisation ----------
 
-path  = "/Users/Tchoi/OneDrive/1A/Lidar/"   # A modifier
+path  = "/Users/aubin/OneDrive/1A/Lidar/"   # A modifier
 path0 = path  + "Work/"
 path1 = path0 + "1510301.I55"
 path2 = path0 + "WLS200s-15_radial_wind_data_2015-04-13_01-00-00.csv"
@@ -24,7 +24,7 @@ path2 = path0 + "WLS200s-15_radial_wind_data_2015-04-13_01-00-00.csv"
 os.chdir(path)  # On modifie le répertoire courant pour le répertoire contenant les fichiers .py
 from Layout import Layout
 from Parseur import ParseurSonique, ParseurLidar
-from Comparaison import Projection, Interpolation, Interpolationh, Average, Distance
+from Comparaison import Projection, Interpolation, Interpolationh, Distance
 from Maillage import Maillage
 from Interpret import *
 
@@ -85,23 +85,38 @@ if rep.upper() == "Y" or rep.upper() == "O":
 
 # ---------- Traitement des données ----------
 
-# Anémomètre sonique
-
-R = Projection(U,V,W,xM,yM,zM,xL,yL,zL)*(1/100) # Valeurs des vitesses radiales acquises par l'anémomètre (en m/s)
-R_avg = np.average(R)
 
 # Lidar
 
-C = Interpolationh(L,xM,yM,zM,xL,yL,zL,True) # Ensemble des indices des points vérifiant une certaine condition sur rho, theta et phi
+# Ensemble des indices des points vérifiant une certaine condition sur rho, theta et phi
+C = Interpolationh(L,xM,yM,zM,xL,yL,zL,True)
+
+# Distances auxquelles se trouvent les points de mesure par rapport au mât
 D = [[Distance(xM-xL,yM-yL,zM-zL,L[1][C[i][j]],L[2][C[i][j]],L[3][C[i][j]]) for j in range(len(C[i]))] for i in range(len(C))]
 
-# Valeurs à comparer
+# Vitesse Lidar
+VL  = np.array([np.average([-L[4][C[i][j]] for j in range(len(C[i]))], weights = D[i]) for i in range(len(C))])
 
-VL  = np.array([np.average([-L[4][C[i][j]] for j in range(len(C[i]))], weights = D[i]) for i in range(len(C))])                         # Vitesse Lidar
-DVL = np.array([Average(L,C[k],xM,yM,zM)[1] for k in range(len(C))])                                                                    # Ecart type sur les mesures Lidar
-Cluster = np.array([np.array([R[int(L[0][k])] for k in range(np.amin(C[i]) - 50, np.amax(C[i]) + 50)]) for i in range(len(C))])         # Cluster de valeurs de la vitesse Sonique prises à des temps proches de ceux auxquels le Lidar prend une mesure proche du mât
-VS  = np.array([np.average(Cluster[i]) for i in range(len(C))])                                                                         # Vitesse Sonique (moyenne par cluster)
-DVS = np.array([np.sqrt(np.sum([(Cluster[i][j] - VS[i])**2 for j in range(len(Cluster[i]))])/len(Cluster[i])) for i in range(len(VS))]) # Ecart type sur chaque cluster
+# Ecart type sur les mesures Lidar
+DVL = np.array([np.average([L[5][C[i][j]] for j in range(len(C[i]))], weights = D[i]) for i in range(len(C))])
+
+
+# Anémomètre sonique
+
+# Valeurs des vitesses radiales acquises par l'anémomètre (en m/s)
+R = Projection(U,V,W,xM,yM,zM,xL,yL,zL)*(1/100)
+
+# Moyenne des valeurs mesurées (utilisée dans la fonction Histo)
+R_avg = np.average(R)
+
+# Cluster de valeurs de la vitesse Sonique prises à des temps proches de ceux auxquels le Lidar prend une mesure proche du mât
+Cluster = np.array([np.array([R[int(L[0][k])] for k in range(np.amin(C[i]) - 50, np.amax(C[i]) + 50)]) for i in range(len(C))])
+
+# Vitesse Sonique (moyenne par cluster)
+VS  = np.array([np.average(Cluster[i]) for i in range(len(C))])
+
+# Ecart type sur chaque cluster
+DVS = np.array([np.sqrt(np.sum([(Cluster[i][j] - VS[i])**2 for j in range(len(Cluster[i]))])/len(Cluster[i])) for i in range(len(VS))])
 
 
 # ---------- Affichage des valeurs ----------
@@ -137,40 +152,47 @@ plt.savefig(path + "Temp/" + "Histo.png", dpi = 100) # Histogramme des valeurs
 
 # Fonction qui prend en entrée un tableau et qui modifie ses valeurs pour en garder les n premières décimales
 
-def decimals(A, n):
+def decimals(A, p):
     if isinstance(A, (np.ndarray, list)):
         B = []
         for k in range(len(A)):
-            B.append(decimals(A[k], n))
+            B.append(decimals(A[k], p))
         return np.array(B)
     elif isinstance(A, (int, float, np.intc, np.single, np.int32, np.int64, np.float32, np.float64)):
-        return round(A*10**n)/10**n
+        return round(A*10**p)/10**p
     else:
         return A
 
-workbook = xlsxwriter.Workbook('Lidar.xlsx')
-worksheet = workbook.add_worksheet()
+# Création d'un nouveau fichier Excel dans le dossier courant (path) sous le nom "Lidar.xlsx"
 
-worksheet.set_column(0, 7, 10) # On agrandit la largeur des colonnes
+try:
+    workbook = xlsxwriter.Workbook("Lidar.xlsx")
+    worksheet = workbook.add_worksheet()
 
-worksheet.write_row(0,0,["Time", "RWS (Lidar)", "DRWS (Lidar)","RWS (Sonic)", "DRWS (Sonic)", "Distance (m)", "rho (m)", "theta (°)", "All speeds in m/s"]) # Première ligne
+    worksheet.set_column(0, 7, 10.5) # On agrandit la largeur des colonnes
 
-row, col = 1, 0
-for i in range(len(C)):
-    for j in range(len(C[0])):
-        worksheet.write_row(row, col, decimals([str(int((L[0][C[i][j]]/10)//60)) + " min " + str(int(10*(L[0][C[i][j]]/10)%60)/10) + " s", -L[4][C[i][j]], L[5][C[i][j]], "", "", Distance(xM-xL,yM-yL,zM-zL,L[1][C[i][j]],L[2][C[i][j]],L[3][C[i][j]]), L[1][[C[i][j]]], L[2][C[i][j]]], 4))
-        row += 1
-    worksheet.write_row(row, col, decimals(["Average of 4", VL[i], DVL[i], VS[i], DVS[i]], 4))
-    row += 2
+    worksheet.write_row(0,0,["Time", "RWS (Lidar)", "DRWS (Lidar)","RWS (Sonic)", "DRWS (Sonic)", "Distance (m)", "rho (m)", "theta (°)", "All speeds in m/s"]) # Première ligne
 
-# Insertion des images enregistrées précédemment
+    row, col = 1, 0
 
-worksheet.insert_image("J2", path + "Temp/" + "RWS_Sonic.png", {'x_scale': 0.33, 'y_scale': 0.33})
-worksheet.insert_image("J26", path + "Temp/" + "Histo.png", {'x_scale': 0.33, 'y_scale': 0.33})
+    for i in range(len(C)):
+        for j in range(len(C[0])):
+            worksheet.write_row(row, col, decimals([str(int((L[0][C[i][j]]/10)//60)) + " min " + str(int(10*(L[0][C[i][j]]/10)%60)/10) + " s", -L[4][C[i][j]], L[5][C[i][j]], "", "", Distance(xM-xL,yM-yL,zM-zL,L[1][C[i][j]],L[2][C[i][j]],L[3][C[i][j]]), L[1][[C[i][j]]], L[2][C[i][j]]], 4))
+            row += 1
+        worksheet.write_row(row, col, decimals(["Average of 4", VL[i], DVL[i], VS[i], DVS[i]], 4))
+        row += 2
 
-workbook.close()
+    # Insertion des images enregistrées précédemment
 
-# On supprime les images enregistrées
+    worksheet.insert_image("J3", path + "Temp/" + "RWS_Sonic.png", {'x_scale': 0.33, 'y_scale': 0.33})
+    worksheet.insert_image("J27", path + "Temp/" + "Histo.png", {'x_scale': 0.33, 'y_scale': 0.33})
+
+    workbook.close()
+
+except xlsxwriter.exceptions.FileCreateError: # Résoud un problème d'autorisation rencontré sous Windows
+    os.remove(path + "Lidar.xlsx") # On supprime le fichier bloqué et on le réécrit
+
+    # On supprime les images enregistrées
 
 try:
     os.remove(path + "Temp/" + "Histo.png")
@@ -178,3 +200,4 @@ try:
     os.rmdir(path + "Temp")
 except FileNotFoundError:
     os.rmdir(path + "Temp")
+
