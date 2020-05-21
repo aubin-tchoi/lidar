@@ -7,8 +7,8 @@ from shutil import copyfile
 
 # Conversion du timestamp en dixièmes de seconde écoulés depuis minuit (pour match les indices des données Sonic)
 
-def convertime(str):
-    HouMouS = str.replace(":", " ").split() # Hour, Min, Sec
+def convertime(stc):
+    HouMouS = stc.replace(":", " ").split() # Hour, Min, Sec
     return round((float(HouMouS[0])*3600 + float(HouMouS[1])*60 + float(HouMouS[2]))*10)
 
 
@@ -48,7 +48,7 @@ def ParseurLidar(path):
     line = file.readline()                  # On passe la première ligne
     n = len(open(path).readlines()) - 1     # Nombre de lignes dans le .csv (moins la première ligne)
 
-    time0, rho0, theta0, phi0, rws0, drws0  = [], [], [], [], [], []
+    time0, rho0, theta0, phi0, rws0, drws0, id0  = [], [], [], [], [], [], []
 
     for i in range(n):
         line = file.readline()
@@ -60,8 +60,8 @@ def ParseurLidar(path):
             phi0.append(round(100*float(polar[6]))/100)
             rws0.append(float(polar[8]))
             drws0.append(float(polar[9]))
-
-    L = [np.array(time0), np.array(rho0), np.array(theta0), np.array(phi0), np.array(rws0), np.array(drws0)]
+            id0.append(int(polar[4]))
+    L = [np.array(time0), np.array(rho0), np.array(theta0), np.array(phi0), np.array(rws0), np.array(drws0), np.array(ido0)]
 
     file.close()
 
