@@ -17,27 +17,43 @@ et dans lequel theta correspond à l'azimuth (theta = 0 pointe vers le Nord) et 
 
 path  = "/Users/aubin/OneDrive/1A/Lidar/"   # A modifier
 
-# On reprend les fonctions des fichiers annexes pour lire les données
+# Initialisation du compteur de temps
+
 tini = time.perf_counter()
+
 os.chdir(path)  # On modifie le répertoire courant pour le répertoire contenant les fichiers .py
+
+# On reprend les fonctions des fichiers annexes pour lire les données
 from Layout import Layout
 from Parseur import ParseurSonique, ParseurLidar
-from Comparaison import Projection, Interpolation, Interpolationh, Average
+from Comparaison import Projection, Interpolation, Interpolationh, Distance
 from Maillage import Maillage
+from Interpret import *
 
 path0 = path + "Lidar+Sonic/"
 
 os.chdir(path0)
 n = len(os.listdir())//2 # On compte le nombre de fichiers (de couples de fichiers Lidar/Sonique)
 
+    # Fonction qui prend en entrée un tableau et qui modifie ses valeurs pour en garder les n premières décimales
+
+def decimals(A, p):
+    if isinstance(A, (np.ndarray, list)):
+        B = []
+        for k in range(len(A)):
+            B.append(decimals(A[k], p))
+        return np.array(B)
+    elif isinstance(A, (int, float, np.intc, np.single, np.int32, np.int64, np.float32, np.float64)):
+        return round(A*10**p)/10**p
+    else:
+        return A
+
 workbook = xlsxwriter.Workbook(path + 'Lidar8.xlsx')
 worksheet = workbook.add_worksheet()
-for c in range(6*n):
-    if c%6 == 0:
-        worksheet.set_column(c, c, 13.66)
-    else:
-        worksheet.set_column(c, c, 10.5)
-row, col = 0, 0
+worksheet.set_column(0, 1, 14)
+worksheet.set_column(1, 7, 10.5) # On agrandit la largeur des colonnes
+worksheet.write_row(0,0,["Time", "RWS (Lidar)", "DRWS (Lidar)","RWS (Sonic)", "DRWS (Sonic)", "Distance (m)", "rho (m)", "theta (°)", "All speeds in m/s"]) # Première ligne
+row, col = 1, 0
 
 zM = 55 # Altitude du mât
 zL = 0  # Altitude du Lidar
@@ -45,16 +61,16 @@ zL = 0  # Altitude du Lidar
 xM,yM,xL,yL = Layout(path + "Work/",False) # Coordonnées du mât et du Lidar
 plt.close("Layout")
 
-for indice in range(1, n+1): # On parcourt les différents fichiers
+for hour in range(1, n+1): # On parcourt les différents fichiers
 
-    path1  = path0 + "151030" + str(indice) + ".I55"
-    path2  = path0 + "WLS200s-15_radial_wind_data_2015-04-13_0" + str(indice) + "-00-00.csv"
+    path1  = path0 + "151030" + str(hour) + ".I55"
+    path2  = path0 + "WLS200s-15_radial_wind_data_2015-04-13_0" + str(hour) + "-00-00.csv"
 
     # Champs des vitesses
 
     try:
         U,V,W = ParseurSonique(path1)
-        L     = ParseurLidar(path2)
+        L = ParseurLidar(path2)
         L[0] %= 36000
     except FileNotFoundError:
         print("Error in path spelling")
@@ -66,45 +82,59 @@ for indice in range(1, n+1): # On parcourt les différents fichiers
 
     if not os.path.exists(path + "Images/"):
         os.makedirs(path + "Images/")
-    plt.savefig(path + "Images/" + "Champ_Lidar_" + str(indice) + ".png")
+    plt.savefig(path + "Images/" + "Champ_Lidar_" + str(hour) + ".png")
 
     plt.close("Maillage") # La figure se ferme juste après avoir fini de tracer afin d'éviter de surcharger l'instance de python ouverte (elle garde en mémoire tous les points pendant toute la durée du tracé)
     """
+
     # ---------- Traitement des données ----------
 
-    # Anémomètre sonique
-
-    R = Projection(U,V,W,xM,yM,zM,xL,yL,zL)*(1/100) # Valeurs des vitesses radiales acquises par l'anémomètre (en m/s)
-    R_avg = sum(R)/len(R)
 
     # Lidar
 
-    # C = Interpolation(L,xM,yM,zM,xL,yL,zL,16,True) # Ensemble des indices des 16 points les plus proches du mât
-    C = Interpolationh(L,xM,yM,zM,xL,yL,zL,False) # Ensemble des indices des points vérifiant une certaine condition sur rho, theta et phi
+    # Ensemble des indices des points vérifiant une certaine condition sur rho, theta et phi
+    C = Interpolationh(L,xM,yM,zM,xL,yL,zL,False)
 
-    # Valeurs à comparer
+    # Distances auxquelles se trouvent les points de mesure par rapport au mât
+    D = [[Distance(xM-xL,yM-yL,zM-zL,L[1][C[i][j]],L[2][C[i][j]],L[3][C[i][j]]) for j in range(len(C[i]))] for i in range(len(C))]
 
-    VL  = np.array([Average(L,C[k],xM,yM,zM)[0] for k in range(len(C))])
-    DVL = np.array([Average(L,C[k],xM,yM,zM)[1] for k in range(len(C))])
-    VS  = np.array([sum([(R[int(L[0][C[i][j]-1])] + R[int(L[0][C[i][j]])] + R[int(L[0][C[i][j]+1])])/3 for j in range(len(C[i]))])/len(C[i]) for i in range(len(C))]) # On moyenne sur 3 valeurs proches dans le temps puisque les horloges des deux appareils de mesure peuvent être désynchronisées
+    # Vitesse Lidar
+    VL = np.array([np.average([-L[4][C[i][j]] for j in range(len(C[i]))], weights = D[i]) for i in range(len(C))])
 
-    worksheet.write_row(row,col,[str(indice-1) + ":00 to " + str(indice) + ":00 a.m.", "Time", "RWS (Lidar)", "DRWS (Lidar)", "RWS (Sonic)"])
-    row += 1
-    col += 1
+    # Ecart type sur les mesures Lidar
+    DVL = np.array([np.average([L[5][C[i][j]] for j in range(len(C[i]))], weights = D[i]) for i in range(len(C))])
+
+
+    # Anémomètre sonique
+
+    # Valeurs des vitesses radiales acquises par l'anémomètre (en m/s)
+    R = Projection(U,V,W,xM,yM,zM,xL,yL,zL)*(1/100)
+
+    # Moyenne des valeurs mesurées (utilisée dans la fonction Histo)
+    R_avg = np.average(R)
+
+    # Cluster de valeurs de la vitesse Sonique prises à des temps proches de ceux auxquels le Lidar prend une mesure proche du mât
+    Cluster = np.array([np.array([R[int(L[0][k])] for k in range(np.amin(C[i]) - 50, np.amax(C[i]) + 50)]) for i in range(len(C))])
+
+    # Vitesse Sonique (moyenne par cluster)
+    VS  = np.array([np.average(Cluster[i]) for i in range(len(C))])
+
+    # Ecart type sur chaque cluster
+    DVS = np.array([np.sqrt(np.sum([(Cluster[i][j] - VS[i])**2 for j in range(len(Cluster[i]))])/len(Cluster[i])) for i in range(len(VS))])
+
+
+    # ---------- Ecriture du fichier Excel ----------
+
     for i in range(len(C)):
         for j in range(len(C[0])):
-            worksheet.write_row(row, col, [str(int((L[0][C[i][j]]/10)//60)) + " min " + str(int(10*(L[0][C[i][j]]/10)%60)/10) + " s", -L[4][C[i][j]], L[5][C[i][j]], (R[int(L[0][C[i][j]-1])] + R[int(L[0][C[i][j]])] + R[int(L[0][C[i][j]+1])])/3])
+            worksheet.write_row(row, col, decimals([str(hour) + " h " + str(int((L[0][C[i][j]]/10)//60)) + " min " + str(int(10*(L[0][C[i][j]]/10)%60)/10) + " s", -L[4][C[i][j]], L[5][C[i][j]], "", "", Distance(xM-xL,yM-yL,zM-zL,L[1][C[i][j]],L[2][C[i][j]],L[3][C[i][j]]), L[1][[C[i][j]]], L[2][C[i][j]]], 4))
             row += 1
-        worksheet.write_row(row, col, ["Average of 4", VL[i], DVL[i], VS[i]])
+        worksheet.write_row(row, col, decimals(["Average of 4", VL[i], DVL[i], VS[i], DVS[i]], 4))
         row += 2
-    col += 5
-    row = 0
 
-    if indice == 1:
-        print(str(indice) + "er fichier traité !")
-    else:
-        print(str(indice) + "ème fichier traité !")
+try:
+    workbook.close()
+except xlsxwriter.exceptions.FileCreateError: # Résoud un problème d'autorisation rencontré sous Windows
+        os.remove(path + "Lidar.xlsx") # On supprime le fichier bloqué et on le réécrit
 
-workbook.close()
 print("Total execution time : " + str(time.perf_counter() - tini) + " s")
-
