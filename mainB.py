@@ -15,7 +15,7 @@ et dans lequel theta correspond à l'azimuth (theta = 0 pointe vers le Nord) et 
 
 # ---------- Initialisation ----------
 
-path  = "/Users/aubin/OneDrive/1A/Lidar/"   # A modifier
+path  = "/Users/Tchoi/OneDrive/1A/Lidar/"   # A modifier
 
 # Initialisation du compteur de temps
 
@@ -50,12 +50,13 @@ def decimals(A, p):
 
 # Création du fichier Excel
 
-workbook = xlsxwriter.Workbook(path + 'Lidar8.xlsx')
+workbook = xlsxwriter.Workbook(path + 'Lidar8.xlsx', {'strings_to_numbers': True})
 worksheet = workbook.add_worksheet()
 
 worksheet.set_column(0, 1, 14)
+worksheet.set_column(0, 8, 14)
 worksheet.set_column(1, 7, 10.5) # On agrandit la largeur des colonnes
-worksheet.write_row(0,0,["Time", "RWS (Lidar)", "DRWS (Lidar)","RWS (Sonic)", "DRWS (Sonic)", "Distance (m)", "rho (m)", "theta (°)", "All speeds in m/s"]) # Première ligne
+worksheet.write_row(0,0,["Time", "RWS (Lidar)", "DRWS (Lidar)","RWS (Sonic)", "DRWS (Sonic)", "Distance (m)", "rho (m)", "theta (°)", "Error, RMSE (%)", "All speeds in m/s"]) # Première ligne
 row, col = 1, 0
 
 zM = 55 # Altitude du mât
@@ -151,7 +152,7 @@ for hour in range(1, n+1): # On parcourt les différents fichiers
         for j in range(len(C[0])):
             worksheet.write_row(row, col, decimals([str(hour - 1) + " h " + str(int((L[0][C[i][j]]/10)//60)) + " min " + str(int(10*(L[0][C[i][j]]/10)%60)/10) + " s", -L[4][C[i][j]], L[5][C[i][j]], "", "", Distance(xM-xL,yM-yL,zM-zL,L[1][C[i][j]],L[2][C[i][j]],L[3][C[i][j]]), L[1][[C[i][j]]], L[2][C[i][j]]], 4))
             row += 1
-        worksheet.write_row(row, col, decimals(["Average of 4", VL[i], DVL[i], VS[i], DVS[i]], 4))
+        worksheet.write_row(row, col, decimals(["Average of 4", VL[i], DVL[i], VS[i], DVS[i], "", "", "", -abs(VL[i] - VS[i])/VS[i]/6*100], 4))
         row += 2
 
 # Tracé de la vitesse radiale mesurée par l'anémomètre
@@ -169,8 +170,12 @@ plt.savefig(path + "Temp/" + "Histo.png", dpi = 100)
 
 # Insertion des images dans le fichier Excel
 
-worksheet.insert_image("J3", path + "Temp/" + "RWS_Sonic.png", {'x_scale': 0.33, 'y_scale': 0.33})
-worksheet.insert_image("J27", path + "Temp/" + "Histo.png", {'x_scale': 0.33, 'y_scale': 0.33})
+worksheet.insert_image("K3", path + "Temp/" + "RWS_Sonic.png", {'x_scale': 0.33, 'y_scale': 0.33})
+worksheet.insert_image("K27", path + "Temp/" + "Histo.png", {'x_scale': 0.33, 'y_scale': 0.33})
+
+# Erreur quadratique totale
+
+worksheet.write(row - 1, 9, "= SQRT(SUMSQ(I:I)/COUNTA(I:I))")
 
 try:
     workbook.close()
