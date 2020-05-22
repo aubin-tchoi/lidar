@@ -4,6 +4,7 @@ import os
 import docx2txt
 import seaborn as sns
 import matplotlib.pyplot as plt
+import numpy as np
 
 sns.set(color_codes=True)
 
