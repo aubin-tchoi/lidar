@@ -198,7 +198,7 @@ try:
                 worksheet.write_row(row, col, decimals([str(int((L[0][C[i][j]]/10)//60)) + " min " + str(int(10*(L[0][C[i][j]]/10)%60)/10) + " s", -L[4][C[i][j]], L[5][C[i][j]], "", "", Distance(xM-xL,yM-yL,zM-zL,L[1][C[i][j]],L[2][C[i][j]],L[3][C[i][j]]), L[1][[C[i][j]]], L[2][C[i][j]]], 4))
             row += 1
         if rep == "1":
-            worksheet.write_row(row, col, decimals(["Average of 4", VL[i], DVL[i], VS[i], DVS[i], "", "", "", -abs(VL[i] - VS[i])/VS[i]*100], 4))
+            worksheet.write_row(row, col, decimals(["Average of 4", VL[i], DVL[i], VS[i], DVS[i], "", "", "", -abs(VL[i] - VS[i])/VS[i]/6*100], 4))
         row += 2
 
     worksheet.write(row - 1, 9, "= SQRT(SUMSQ(I:I)/COUNTA(I:I))")
