@@ -61,7 +61,7 @@ def ParseurLidar(path):
             rws0.append(float(polar[8]))
             drws0.append(float(polar[9]))
             id0.append(int(polar[4]))
-    L = [np.array(time0), np.array(rho0), np.array(theta0), np.array(phi0), np.array(rws0), np.array(drws0), np.array(ido0)]
+    L = [np.array(time0), np.array(rho0), np.array(theta0), np.array(phi0), np.array(rws0), np.array(drws0), np.array(id0)]
 
     file.close()
 
