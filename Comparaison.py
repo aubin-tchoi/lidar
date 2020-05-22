@@ -146,7 +146,7 @@ def Interpolationh(L,xM,yM,zM,xL,yL,zL,count_time):
     dr, dtheta = 50, 1.2
     theta = theta*180/np.pi
     C = []  # Liste des points proches du mât
-    for k in np.where(abs(L[3] - 2.90) < 0.01)[0]:
+    for k in np.where(abs(L[3] - 3.96) < 0.05)[0]:
         if abs(L[1][k] - rho) <= dr/2 and abs(L[2][k] - theta) <= dtheta/2:
             C.append(k)
     if count_time:
