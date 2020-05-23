@@ -156,7 +156,7 @@ fig.savefig(path + "Temp/" + "RWS_Sonic.png", dpi = 100) # Vitesse radiale
 Histo(R, 70, R_avg, VL)
 plt.savefig(path + "Temp/" + "Histo.png", dpi = 100) # Histogramme des valeurs
 
-MaillageReduit(L,30,xL,yL,zL,xM,yM,zM,C,path,True) # Maillage réduit
+MaillageReduit(L,30,xL,yL,zL,xM,yM,zM,C,path) # Maillage réduit
 
 # ---------- Ecriture d'un fichier Excel ----------
 
