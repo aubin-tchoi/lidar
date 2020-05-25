@@ -15,7 +15,7 @@ Les fonctions utilisées uniquement au sein d'un même fichier ne prennent pas d
 ### Ce que le main fait exactement
 
 - Je l'ai fait crash si on lui donne le mauvais chemin,
-- Il représente la disposition du parc éolien si demandé, de même pour la représentation du champ des points visités par le Lidar (et enregistre la figure sous forme d'image dans un dossier ./Images si demandé),
+- Il représente la disposition du parc éolien si demandé, de même pour la représentation du champ des points visités par le Lidar (et enregistre la figure sous forme d'image dans un dossier ./Images si demandé), de même pour la rose des vents mesurés par l'anémomètre,
 - Il enregistre dans un fichier .xlsx les données traités.
 
 # Schéma explicatif
