@@ -26,7 +26,6 @@ os.chdir(path)  # On modifie le répertoire courant pour le répertoire contenan
 from Layout import Layout
 from Parseur import ParseurSonique, ParseurLidar
 from Comparaison import Projection, Interpolation, Interpolationh, Distance
-from Maillage import *
 from Interpret import *
 
 # Champs des vitesses
@@ -71,7 +70,7 @@ if rep.upper() == "Y" or rep.upper() == "O":
     n = builtins.input("Number of points (Recommended : 800) : ") # 800 c'est pas mal
     t = builtins.input("Timestep (Recommended : 0.001) : ") # 0.001 c'est pas mal
     try:
-        Maillage(L,int(n),4,float(t),xL,yL,zL,xM,yM,zM) # On ne représente qu'un point sur 17 afin de conserver une certaine lisibilité
+        Maillage(L,int(n),4,float(t),xL,yL,zL,xM,yM,zM,True) # On ne représente qu'un point sur 17 afin de conserver une certaine lisibilité
     except ValueError:
         print("Given set of values invalid")
 
@@ -157,6 +156,9 @@ Histo(R, 70, R_avg, VL)
 plt.savefig(path + "Temp/" + "Histo.png", dpi = 100) # Histogramme des valeurs
 
 MaillageReduit(L,30,xL,yL,zL,xM,yM,zM,C,path) # Maillage réduit
+
+Windrose1(U, V, path) # Rose des vents (points)
+Windrose1(U, V, path) # Rose des vents (direction)
 
 # ---------- Ecriture d'un fichier Excel ----------
 
