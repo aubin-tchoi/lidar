@@ -15,7 +15,7 @@ et dans lequel theta correspond à l'azimuth (theta = 0 pointe vers le Nord) et 
 
 # ---------- Initialisation ----------
 
-path  = "/Users/Tchoi/OneDrive/1A/Lidar/"   # A modifier
+path  = "/Users/aubin/OneDrive/1A/Lidar/"   # A modifier
 
 # Initialisation du compteur de temps
 
@@ -26,8 +26,7 @@ os.chdir(path)  # On modifie le répertoire courant pour le répertoire contenan
 # On reprend les fonctions des fichiers annexes pour lire les données
 from Layout import Layout
 from Parseur import ParseurSonique, ParseurLidar
-from Comparaison import Projection, Interpolation, Interpolationh, Distance
-from Maillage import Maillage
+from Comparaison import Projection, Interpolationh, Distance
 from Interpret import *
 
 path0 = path + "Lidar+Sonic/"
@@ -64,12 +63,13 @@ zL = 0  # Altitude du Lidar
 
 # Initialisation RWS_Sonic
 
-Rsonic = []
+R8, U8, V8, VL8 = [], [], [], []
 tmptime = []
 tmplidar = []
 fig, axes = plt.subplots(1, 1, num = "RWS_Sonic",figsize = (14,14))
-axes.set_xlabel("t (s)")
-axes.set_ylabel("RWS (m/s)")
+axes.set_xlabel("t (s)", fontsize = 25)
+axes.set_ylabel("RWS (m/s)", fontsize = 20)
+axes.set_title("Evolution de la vitesse radiale mesurée par l'anémomètre", fontsize = 20)
 
 xM,yM,xL,yL = Layout(path + "Work/",False) # Coordonnées du mât et du Lidar
 plt.close("Layout")
@@ -88,9 +88,12 @@ for hour in range(1, n+1): # On parcourt les différents fichiers
     except FileNotFoundError:
         print("Error in path spelling")
         sys.exit()
+    for u in U:
+        U8.append(u)
+    for v in V:
+        V8.append(v)
 
     """
-    # Il faudra adapter le rapport 850 introduit dans la ligne suivante en fonction des performances de la machine et de les indices des 8 points les plus proches du mât
     Maillage(L,int(len(L[0])/340),4,0.0001,xL,yL,zL,xM,yM,zM) # On ne représente qu'un point sur 17 afin de conserver une certaine lisibilité
 
     if not os.path.exists(path + "Images/"):
@@ -113,6 +116,8 @@ for hour in range(1, n+1): # On parcourt les différents fichiers
 
     # Vitesse Lidar
     VL = np.array([np.average([-L[4][C[i][j]] for j in range(len(C[i]))], weights = D[i]) for i in range(len(C))])
+    for vl in VL:
+        VL8.append(vl)
 
     # Ecart type sur les mesures Lidar
     DVL = np.array([np.average([L[5][C[i][j]] for j in range(len(C[i]))], weights = D[i]) for i in range(len(C))])
@@ -123,7 +128,7 @@ for hour in range(1, n+1): # On parcourt les différents fichiers
     # Valeurs des vitesses radiales acquises par l'anémomètre (en m/s)
     R = Projection(U,V,W,xM,yM,zM,xL,yL,zL)*(1/100)
     for el in R:
-        Rsonic.append(el)
+        R8.append(el)
 
     # Moyenne des valeurs mesurées (utilisée dans la fonction Histo)
     R_avg = np.average(R)
@@ -157,7 +162,7 @@ for hour in range(1, n+1): # On parcourt les différents fichiers
 
 # Tracé de la vitesse radiale mesurée par l'anémomètre
 
-axes.plot(np.arange(0,len(Rsonic))/10,Rsonic)
+axes.plot(np.arange(0,len(R8))/10,R8)
 axes.scatter(tmptime, tmplidar, s = 14, c = 'r',zorder = 3)
 if not os.path.exists(path + "Temp/"):
     os.makedirs(path + "Temp/")
@@ -165,13 +170,20 @@ fig.savefig(path + "Temp/" + "RWS_Sonic.png", dpi = 100)
 
 # Tracé de l'histogramme
 
-Histo(R, 70)
+Histo(R8, 70, np.average(R8), VL8)
 plt.savefig(path + "Temp/" + "Histo.png", dpi = 100)
+
+# Rose des vents
+
+Windrose1(U8, V8, path + "Temp/")
+Windrose2(U8, V8, 72, path + "Temp/")
 
 # Insertion des images dans le fichier Excel
 
 worksheet.insert_image("K3", path + "Temp/" + "RWS_Sonic.png", {'x_scale': 0.33, 'y_scale': 0.33})
 worksheet.insert_image("K27", path + "Temp/" + "Histo.png", {'x_scale': 0.33, 'y_scale': 0.33})
+worksheet.insert_image("K51", path + "Temp/" + "Windrose1.png", {'x_scale': 0.33, 'y_scale': 0.33})
+worksheet.insert_image("K74", path + "Temp/" + "Windrose2.png", {'x_scale': 0.33, 'y_scale': 0.33})
 
 # Erreur quadratique totale
 
@@ -187,6 +199,8 @@ except xlsxwriter.exceptions.FileCreateError: # Résoud un problème d'autorisat
 try:
     os.remove(path + "Temp/" + "Histo.png")
     os.remove(path + "Temp/" + "RWS_Sonic.png")
+    os.remove(path + "Temp/" + "Windrose1.png")
+    os.remove(path + "Temp/" + "Windrose2.png")
     os.rmdir(path + "Temp")
 except FileNotFoundError:
     os.rmdir(path + "Temp")
