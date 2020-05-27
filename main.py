@@ -25,7 +25,7 @@ path2 = path0 + "WLS200s-15_radial_wind_data_2015-04-13_01-00-00.csv"
 os.chdir(path)  # On modifie le répertoire courant pour le répertoire contenant les fichiers .py
 from Layout import Layout
 from Parseur import ParseurSonique, ParseurLidar
-from Comparaison import Projection, Interpolation, Interpolationh, Distance
+from Comparaison import Projection, Interpolationh, Distance
 from Interpret import *
 
 # Champs des vitesses
@@ -130,11 +130,12 @@ elif rep == "2":
 
 # ---------- Affichage des valeurs ----------
 
+plt.close("all")
 fig, axes = plt.subplots(1, 1, num = "RWS_Sonic",figsize = (14,14))
 axes.plot(np.arange(0,len(R))/10,R)
-axes.set_xlabel("t (s)")
-axes.set_ylabel("RWS (m/s)")
-axes.set_title("Evolution de la vitesse radiale mesurée par l'anémomètre")
+axes.set_xlabel("t (s)", fontsize = 25)
+axes.set_ylabel("RWS (m/s)", fontsize = 20)
+axes.set_title("Evolution de la vitesse radiale mesurée par l'anémomètre", fontsize = 20)
 
 # On ajoute en rouge les points correspondant aux valeurs mesurées par le Lidar
 
@@ -157,8 +158,8 @@ plt.savefig(path + "Temp/" + "Histo.png", dpi = 100) # Histogramme des valeurs
 
 MaillageReduit(L,30,xL,yL,zL,xM,yM,zM,C,path) # Maillage réduit
 
-Windrose1(U, V, path) # Rose des vents (points)
-Windrose1(U, V, path) # Rose des vents (direction)
+Windrose1(U, V, path + "Temp/") # Rose des vents (points)
+Windrose2(U, V, 72, path + "Temp/") # Rose des vents (direction)
 
 # ---------- Ecriture d'un fichier Excel ----------
 
@@ -210,6 +211,8 @@ try:
 
     worksheet.insert_image("K3", path + "Temp/" + "RWS_Sonic.png", {'x_scale': 0.33, 'y_scale': 0.33})
     worksheet.insert_image("K27", path + "Temp/" + "Histo.png", {'x_scale': 0.33, 'y_scale': 0.33})
+    worksheet.insert_image("K51", path + "Temp/" + "Windrose1.png", {'x_scale': 0.33, 'y_scale': 0.33})
+    worksheet.insert_image("K74", path + "Temp/" + "Windrose2.png", {'x_scale': 0.33, 'y_scale': 0.33})
 
     workbook.close()
 
@@ -221,6 +224,8 @@ except xlsxwriter.exceptions.XlsxFileError: # Résoud un problème d'autorisatio
 try:
     os.remove(path + "Temp/" + "Histo.png")
     os.remove(path + "Temp/" + "RWS_Sonic.png")
+    os.remove(path + "Temp/" + "Windrose1.png")
+    os.remove(path + "Temp/" + "Windrose2.png")
     os.rmdir(path + "Temp")
 except FileNotFoundError:
     os.rmdir(path + "Temp")
