@@ -4,12 +4,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 from numpy import cos, sin, pi
 import matplotlib.cm as cm
-from windrose import WindroseAxes
 import os
-try:
-    from inspect import cleandoc as dedent
-except ImportError:
-    from matplotlib.cbook import dedent
+
 
 # Calcul du nombre de rayons différents parcourus pour une même valeur de theta et phi
 
@@ -76,7 +72,7 @@ def Histo(R, n, R_avg = False, VL = False): # n : nombre de barres
         except IndexError:
             print("Some of the RWS values measured by the Lidar are out of the interval [min(R),max(R)]")
 
-    plt.xlabel("Répartition des valeurs de vitesse radiale mesurées par l'anémomètre Sonic")
+    plt.xlabel("Répartition des valeurs de vitesse radiale mesurées par l'anémomètre Sonic", fontsize = 16)
     k = 1 # Nombre de décimales affichées en abscisses
     plt.xticks(np.linspace(rmin,rmax,int(n/2)), [str(round(10**k*el)/10**k) for el in np.linspace(rmin,rmax,int(n/2))])
 
@@ -145,29 +141,27 @@ def MaillageReduit(L,s,xL,yL,zL,xM,yM,zM,C,save = False, show = False):
 # Rose des vents
 
 def norme(x,y):
-    return np.sqrt(x**2+y**2)
+    return np.sqrt(x**2 + y**2)
 
 def theta(x,y):
-    return np.pi + np.arccos(x/norme(x,y)) # (U,V) dans le plan inférieur
+    return -np.arccos(x/norme(x,y)) # (U,V) dans le plan inférieur
 
 def Windrose1(U, V, save = False, show = False):
 
-    theta0 = theta(U,V)
-    D = norme(U,V)
+    theta0 = np.array([theta(U[i],V[i]) for i in range(len(U))])
+    D = np.array([norme(U[i],V[i]) for i in range(len(U))])
     if min(theta0) < 0:
         theta0 += 2*np.pi # On prend des valeurs dans [0;2pi]
 
     cm = plt.cm.get_cmap('Spectral')
-    fig = plt.figure("Windrose1")
-    ax = plt.subplot(111, projection = 'polar')
-    sc = ax.scatter(theta0, D, s = 10, c=D, cmap=cm) # La couleur dépend de la norme, tout comme la distance au centre
+    fig = plt.figure("Windrose1", figsize = (14,14))
+    ax1 = plt.subplot(111, projection = 'polar')
+    sc = ax1.scatter(theta0, D, s = 10, c=D, cmap=cm) # La couleur dépend de la norme, tout comme la distance au centre
     plt.colorbar(sc)
 
     # Enregistrement de l'image dans un dossier Images
     if not isinstance(save, bool):
-        if not os.path.exists(save + "Images/"):
-            os.makedirs(save + "Images/")
-        fig.savefig(save + "Images/" + "Windrose1.png", dpi = 100)
+        fig.savefig(save + "Windrose1.png", dpi = 100)
 
     # Affichage de l'image
     if show:
@@ -178,7 +172,7 @@ def Windrose2(U, V, nzones, save = False, show = False):   # Windrose contenant 
 
     count = np.zeros(nzones)
 
-    theta_deg = theta(U,V)*180/np.pi # Contient les valeurs des angles des vecteurs (U,V) dans le plan hz en °
+    theta_deg = np.array([theta(U[i],V[i]) for i in range(len(U))])*180/np.pi # Contient les valeurs des angles des vecteurs (U,V) dans le plan hz en °
     if min(theta_deg) < 0:
         theta_deg += 360
 
@@ -189,16 +183,14 @@ def Windrose2(U, V, nzones, save = False, show = False):   # Windrose contenant 
     densite = count/len(U)
 
     t = np.array([360/nzones*k for k in range(0,nzones)])*np.pi/180.0 # 360/nzones : largeur d'une zone
-    fig = plt.figure("Windrose2")
-    ax = plt.subplot(111, projection='polar')
-    ax.set_thetagrids(angles=np.arange(0, 360, 45), labels=["E", "N-E", "N", "N-W", "W", "S-W", "S", "S-E"])
-    ax.bar(t, densite*100, width = 2*np.pi/nzones, linewidth = 0.05, fc = "m") # Chaque zone occupe 1/nzones du cercle
+    fig = plt.figure("Windrose2", figsize = (14,14))
+    ax2 = plt.subplot(111, projection = 'polar')
+    ax2.set_thetagrids(angles=np.arange(0, 360, 45), labels=["E", "N-E", "N", "N-W", "W", "S-W", "S", "S-E"])
+    ax2.bar(t, densite*100, width = 2*np.pi/nzones, linewidth = 0.05, fc = "m") # Chaque zone occupe 1/nzones du cercle
 
     # Enregistrement de l'images dans un dossier Images
     if not isinstance(save, bool):
-        if not os.path.exists(save + "Images/"):
-            os.makedirs(save + "Images/")
-        fig.savefig(save + "Images/" + "Windrose2.png", dpi = 100)
+        fig.savefig(save + "Windrose2.png", dpi = 100)
 
     # Affichage de l'image
     if show:
