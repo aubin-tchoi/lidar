@@ -147,18 +147,16 @@ def theta(x,y):
     return -np.arccos(x/norme(x,y)) # (U,V) dans le plan inférieur
 
 def Windrose1(U, V, save = False, show = False):
-
-    theta0 = np.array([theta(U[i],V[i]) for i in range(len(U))])
-    D = np.array([norme(U[i],V[i]) for i in range(len(U))])
+    theta0 = np.array([theta(u,v) for u,v in zip(U,V)])
+    D = np.array([norme(u,v) for u,v in zip(U,V)])
     if min(theta0) < 0:
         theta0 += 2*np.pi # On prend des valeurs dans [0;2pi]
 
     cm = plt.cm.get_cmap('Spectral')
     fig = plt.figure("Windrose1", figsize = (14,14))
-    ax1 = plt.subplot(111, projection = 'polar')
+    ax1 = plt.subplot(111, projection = 'polar', label = "Windrose1")
     sc = ax1.scatter(theta0, D, s = 10, c=D, cmap=cm) # La couleur dépend de la norme, tout comme la distance au centre
     plt.colorbar(sc)
-
     # Enregistrement de l'image dans un dossier Images
     if not isinstance(save, bool):
         fig.savefig(save + "Windrose1.png", dpi = 100)
@@ -167,12 +165,11 @@ def Windrose1(U, V, save = False, show = False):
     if show:
         plt.show()
 
-
 def Windrose2(U, V, nzones, save = False, show = False):   # Windrose contenant uniquement la direction du vent (pas sa norme)
 
     count = np.zeros(nzones)
 
-    theta_deg = np.array([theta(U[i],V[i]) for i in range(len(U))])*180/np.pi # Contient les valeurs des angles des vecteurs (U,V) dans le plan hz en °
+    theta_deg = np.array([theta(u,v) for u,v in zip(U,V)])*180/np.pi # Contient les valeurs des angles des vecteurs (U,V) dans le plan hz en °
     if min(theta_deg) < 0:
         theta_deg += 360
 
@@ -184,7 +181,7 @@ def Windrose2(U, V, nzones, save = False, show = False):   # Windrose contenant 
 
     t = np.array([360/nzones*k for k in range(0,nzones)])*np.pi/180.0 # 360/nzones : largeur d'une zone
     fig = plt.figure("Windrose2", figsize = (14,14))
-    ax2 = plt.subplot(111, projection = 'polar')
+    ax2 = plt.subplot(111, projection = 'polar', label = "Windrose2")
     ax2.set_thetagrids(angles=np.arange(0, 360, 45), labels=["E", "N-E", "N", "N-W", "W", "S-W", "S", "S-E"])
     ax2.bar(t, densite*100, width = 2*np.pi/nzones, linewidth = 0.05, fc = "m") # Chaque zone occupe 1/nzones du cercle
 
