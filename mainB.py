@@ -196,14 +196,17 @@ except xlsxwriter.exceptions.FileCreateError: # Résoud un problème d'autorisat
 
 # On supprime les images enregistrées
 
-try:
-    os.remove(path + "Temp/" + "Histo.png")
-    os.remove(path + "Temp/" + "RWS_Sonic.png")
-    os.remove(path + "Temp/" + "Windrose1.png")
-    os.remove(path + "Temp/" + "Windrose2.png")
-    os.rmdir(path + "Temp")
-except FileNotFoundError:
-    os.rmdir(path + "Temp")
+keep = builtins.input("Do you wish to keep the images (Y/N) ? ")
+
+if keep.upper() == "N":
+    try:
+        os.remove(path + "Temp/" + "Histo.png")
+        os.remove(path + "Temp/" + "RWS_Sonic.png")
+        os.remove(path + "Temp/" + "Windrose1.png")
+        os.remove(path + "Temp/" + "Windrose2.png")
+        os.rmdir(path + "Temp")
+    except FileNotFoundError:
+        os.rmdir(path + "Temp")
 
 # Affichage du temps total d'exécution
 
