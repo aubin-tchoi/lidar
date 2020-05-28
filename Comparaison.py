@@ -18,8 +18,7 @@ def cart_to_pol(x,y,z,xL,yL,zL):
 def Projection(U,V,W,xM,yM,zM,xL,yL,zL):
     rho, theta, phi = cart_to_pol(xM,yM,zM,xL,yL,zL) # Passage en coordonnées cartésiennes
     R0 = []
-    N = len(U)
-    for k in range(N):
+    for k in range(len(U)):
         R0.append(U[k]*np.sin(theta)*np.cos(phi) + V[k]*np.cos(theta)*np.cos(phi) + W[k]*np.sin(phi))
     return np.array(R0)
 
@@ -28,7 +27,7 @@ def Projection(U,V,W,xM,yM,zM,xL,yL,zL):
 
 def Distance(xM,yM,zM,rho,theta,phi):
     theta = theta*np.pi/180
-    phi = phi*np.pi/180
+    phi   = phi*np.pi/180
     return np.sqrt((rho*np.sin(theta)*np.cos(phi) - xM)**2 + (rho*np.cos(theta)*np.cos(phi) - yM)**2 + (rho*np.sin(phi) - zM)**2)
 
 
@@ -157,9 +156,7 @@ def Interpolationh(L,xM,yM,zM,xL,yL,zL,count_time):
 # Prend en entrée une liste d'indices de mesures Lidar et renvoit une liste qui regroupe ces indices par scan
 
 def same_scan(C0):
-    rC = 0
-    C = []
-    temp = []
+    rC, C, temp = 0, [], []
     C0.sort()
     for k in range(len(C0)-1):
         temp.append(C0[k])
