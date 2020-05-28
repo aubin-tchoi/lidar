@@ -8,8 +8,8 @@ from shutil import copyfile
 # Conversion du timestamp en dixièmes de seconde écoulés depuis minuit (pour match les indices des données Sonic)
 
 def convertime(stc):
-    HouMouS = stc.replace(":", " ").split() # Hour, Min, Sec
-    return round((float(HouMouS[0])*3600 + float(HouMouS[1])*60 + float(HouMouS[2]))*10)
+    HMS = stc.replace(":", " ").split() # Hour, Min, Sec
+    return round((float(HMS[0])*3600 + float(HMS[1])*60 + float(HMS[2]))*10)
 
 
 # Prend en entrée un fichier contenant des données Sonic et renvoit les array U, V, W (coordonnées du vent)
@@ -53,14 +53,16 @@ def ParseurLidar(path):
     for i in range(n):
         line = file.readline()
         polar = line.replace(';',' ').replace(',',' ').split()
-        if convertime(polar[1]) < 432000: # time0 correspondra à l'indice de la ligne correspondante dans les mesures Sonic (indice*10 = nbr de s écoulées depuis minuit)
-            time0.append(int(convertime(polar[1])))
-            rho0.append(float(polar[7]))
-            theta0.append(float(polar[5]) + 180.)
-            phi0.append(round(100*float(polar[6]))/100)
-            rws0.append(float(polar[8]))
-            drws0.append(float(polar[9]))
-            id0.append(int(polar[4]))
+        if convertime(polar[1]) < 432000:   # time0 correspondra à l'indice de la ligne correspondante dans les mesures Sonic (indice*10 = nbr de s écoulées depuis minuit)
+            if int(polar[3]) != 238:        # Mode à ignorer
+                if float(polar[11]) >= 72.: # Confidence index not too low
+                    time0.append(int(convertime(polar[1])))
+                    rho0.append(float(polar[7]))
+                    theta0.append(float(polar[5]) + 180.)
+                    phi0.append(round(100*float(polar[6]))/100)
+                    rws0.append(float(polar[8]))
+                    drws0.append(float(polar[9]))
+                    id0.append(int(polar[4]))
     L = [np.array(time0), np.array(rho0), np.array(theta0), np.array(phi0), np.array(rws0), np.array(drws0), np.array(id0)]
 
     file.close()
