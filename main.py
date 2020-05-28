@@ -44,13 +44,7 @@ zL = 0  # Altitude du Lidar
 # ---------- Représentations ----------
 
 plt.close('all')
-"""
-rep = builtins.input("Display Windrose (Y/N) ? ") # Rose des vents
 
-if rep.upper() == "Y"
-    plot_theta(U,V,121)
-    windrose0(U,V,122)
-"""
 # Disposition du parc éolien
 
 rep = builtins.input("Do you wish to display the layout of the windfarm (Y/N) ? ")
@@ -221,12 +215,14 @@ except xlsxwriter.exceptions.XlsxFileError: # Résoud un problème d'autorisatio
 
 # On supprime les images enregistrées
 
-try:
-    os.remove(path + "Temp/" + "Histo.png")
-    os.remove(path + "Temp/" + "RWS_Sonic.png")
-    os.remove(path + "Temp/" + "Windrose1.png")
-    os.remove(path + "Temp/" + "Windrose2.png")
-    os.rmdir(path + "Temp")
-except FileNotFoundError:
-    os.rmdir(path + "Temp")
+keep = builtins.input("Do you wish to keep the images (Y/N) ? ")
 
+if keep.upper() == "N":
+    try:
+        os.remove(path + "Temp/" + "Histo.png")
+        os.remove(path + "Temp/" + "RWS_Sonic.png")
+        os.remove(path + "Temp/" + "Windrose1.png")
+        os.remove(path + "Temp/" + "Windrose2.png")
+        os.rmdir(path + "Temp")
+    except FileNotFoundError:
+        os.rmdir(path + "Temp")
