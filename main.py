@@ -106,7 +106,7 @@ R_avg = np.average(R)
 # Cluster de valeurs de la vitesse Sonique prises à des temps proches de ceux auxquels le Lidar prend une mesure proche du mât
 Cluster = np.array([np.array([R[int(L[0][k])] for k in range(np.amin(C[i]) - 100, np.amax(C[i]) + 100)]) for i in range(len(C))])
 
-rep = builtins.input("Average by cluster (1) or linregress on each cluster (2) ? (1/2) ? ")
+rep = "1"
 
 if rep == "1":
     # Vitesse Sonique (moyenne par cluster)
@@ -150,9 +150,11 @@ fig.savefig(path + "Temp/" + "RWS_Sonic.png", dpi = 100) # Vitesse radiale
 Histo(R, 70, R_avg, VL)
 plt.savefig(path + "Temp/" + "Histo.png", dpi = 100) # Histogramme des valeurs
 
-MaillageReduit(L,30,xL,yL,zL,xM,yM,zM,C,path) # Maillage réduit
+MaillageReduit(L,30,xL,yL,xM,yM,C,path) # Maillage réduit
 
-Windrose1(U, V, path + "Temp/") # Rose des vents (points)
+wind = builtins.input("Color scale : norm (1) or time (2) ? (1/2) ? ")
+
+Windrose1(U, V, path + "Temp/", wind) # Rose des vents (points)
 Windrose2(U, V, 72, path + "Temp/") # Rose des vents (direction)
 
 # ---------- Ecriture d'un fichier Excel ----------
