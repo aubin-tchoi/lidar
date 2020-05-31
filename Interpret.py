@@ -3,7 +3,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from numpy import cos, sin, pi
-import matplotlib.cm as cm
 import os
 
 
@@ -109,7 +108,7 @@ def Maillage(L,n,s,pause,xL,yL,zL,xM,yM,zM,show = False):
         if show:
             plt.pause(pause)
 
-def MaillageReduit(L,s,xL,yL,zL,xM,yM,zM,C,save = False, show = False):
+def MaillageReduit(L,s,xL,yL,xM,yM,C,save = False, show = False):
     _, (ax1,ax2) = plt.subplots(1, 2, num = "MaillageReduit", figsize = (14,14))
     ax1.set_title("y, x") # Le graphe représentera x en abscisses et y en ordonnées
     ax1.set_xlabel("x")
@@ -127,7 +126,6 @@ def MaillageReduit(L,s,xL,yL,zL,xM,yM,zM,C,save = False, show = False):
         phi = pi*L[3][C[0][j]]/180
         x = rho*sin(theta)*cos(phi) + xL # Coordonnées cartésiennes
         y = rho*cos(theta)*cos(phi) + yL
-        z = rho*sin(phi) + zL
         ax1.scatter(x, y, s = s, color = 'b', alpha = 0.75)
         ax2.scatter(x, y, s = 3*s, color = 'b', alpha = 0.75)
     if not isinstance(save,bool):
@@ -146,9 +144,12 @@ def norme(x,y):
 def theta(x,y):
     return -np.arccos(x/norme(x,y)) # (U,V) dans le plan inférieur
 
-def Windrose1(U, V, save = False, show = False):
+def Windrose1(U, V, save = False, norm = 1, show = False):
     theta0 = np.array([theta(u,v) for u,v in zip(U,V)])
-    D = np.array([norme(u,v) for u,v in zip(U,V)])
+    if norm == "1":
+        D = np.array([norme(u,v) for u,v in zip(U,V)])
+    elif norm == "2":
+        D = np.linspace(0,int(len(U)/10),len(U))
     if min(theta0) < 0:
         theta0 += 2*np.pi # On prend des valeurs dans [0;2pi]
 
