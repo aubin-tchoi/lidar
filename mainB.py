@@ -175,7 +175,9 @@ plt.savefig(path + "Temp/" + "Histo.png", dpi = 100)
 
 # Rose des vents
 
-Windrose1(U8, V8, path + "Temp/")
+wind = builtins.input("Color scale : norm (1) or time (2) ? (1/2) ? ")
+
+Windrose1(U8, V8, path + "Temp/", wind)
 Windrose2(U8, V8, 72, path + "Temp/")
 
 # Insertion des images dans le fichier Excel
@@ -211,4 +213,3 @@ if keep.upper() == "N":
 # Affichage du temps total d'exécution
 
 print("Total execution time : " + str(time.perf_counter() - tini) + " s")
-
